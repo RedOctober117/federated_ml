@@ -1,3 +1,9 @@
+include/
+Scripts/
+share/
+.vscode
+pyvenv.cfg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
