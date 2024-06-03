@@ -3,6 +3,8 @@ Scripts/
 share/
 .vscode
 pyvenv.cfg
+bin
+lib64
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

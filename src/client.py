@@ -84,11 +84,8 @@ class ClientModel(fl.client.NumPyClient):
     loss, accuracy = self.model.evaluate(self.preprocessed_train_ds)
     return loss, len(self.preprocessed_train_ds), {'accuracy': accuracy}
   
-  def __init__(self, path):
-    global i
-    id = int(stations[i])
+  def __init__(self, path, id):
     print(f'Creating model based on {id}')
-    i += 1
     data_df = pd.read_csv(path)
     data_df = slice_df(data_df, str(f'stationId != {id}'), )
 
@@ -149,7 +146,8 @@ class ClientModel(fl.client.NumPyClient):
 
 
 def client_fn(cid: str):
-  return ClientModel(path).to_client()
+  global i
+  return ClientModel(path, sys.argv[1:][0]).to_client()
 
 # history = training_model.fit(
 #     preprocessed_train_ds,
@@ -165,23 +163,23 @@ def client_fn(cid: str):
 # plot_the_loss_curve(epochs, mse, history.history["val_mean_squared_error"])
 
 # Start
-# fl.client.start_client(
-#   server_address='127.0.0.1:8080',
-#   # Ignore "argument of type 'ClientModel'" error
-#   client=ClientModel(data_df).to_client(),
-#   max_retries=10000,
-# )
-
-NUM_CLIENTS=5
-
-strategy = FedAvg()
-
-client_resources = {"num_cpus": 4, "num_gpus": 0}
-
-fl.simulation.start_simulation(
-    client_fn=client_fn,
-    num_clients=NUM_CLIENTS,
-    config=fl.server.ServerConfig(num_rounds=5),
-    strategy=strategy,
-    client_resources=client_resources,
+fl.client.start_client(
+  server_address='127.0.0.1:8080',
+  # Ignore "argument of type 'ClientModel'" error
+  client=ClientModel(path, sys.argv[1:][0]).to_client(),
+  max_retries=10000,
 )
+
+# NUM_CLIENTS=5
+
+# strategy = FedAvg()
+
+# client_resources = {"num_cpus": 4, "num_gpus": 0}
+
+# fl.simulation.start_simulation(
+#     client_fn=client_fn,
+#     num_clients=NUM_CLIENTS,
+#     config=fl.server.ServerConfig(num_rounds=5),
+#     strategy=strategy,
+#     client_resources=client_resources,
+# )
