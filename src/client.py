@@ -7,6 +7,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from keras.utils import FeatureSpace
 import sys
+from flwr.common.logger import log
+from logging import INFO, DEBUG
 
 rng = np.random.default_rng()
 
@@ -77,15 +79,20 @@ class ClientModel(fl.client.NumPyClient):
   def fit(self, parameters, config):
     self.model.set_weights(parameters)
     self.model.fit(self.preprocessed_train_ds, epochs=10, validation_data=self.preprocessed_val_ds)
+
     return self.model.get_weights(), len(self.preprocessed_train_ds), {}
   
   def evaluate(self, parameters, config):
     self.model.set_weights(parameters)
     loss, accuracy = self.model.evaluate(self.preprocessed_train_ds)
+
+    log(DEBUG, f'Client trained {self.id} at {accuracy}% accuracy, {loss} loss')
+
     return loss, len(self.preprocessed_train_ds), {'accuracy': accuracy}
   
   def __init__(self, path, id):
-    print(f'Creating model based on {id}')
+    self.id = id
+    log(INFO, f'Creating model based on {id}')
     data_df = pd.read_csv(path)
     data_df = slice_df(data_df, str(f'stationId != {id}'), )
 
@@ -130,18 +137,19 @@ class ClientModel(fl.client.NumPyClient):
     dict_inputs = feature_space.get_inputs()
     encoded_features = feature_space.get_encoded_features()
 
-    x = keras.layers.Dense(100, activation='relu')(encoded_features)
-    x = keras.layers.Dropout(0.5)(x)
-    x = keras.layers.Dense(100, activation='relu')(x)
-    x = keras.layers.Dropout(0.5)(x)
-    x = keras.layers.Dense(100, activation='relu')(x)
-    x = keras.layers.Dropout(0.5)(x)
-    predictions = keras.layers.Dense(1, activation='sigmoid')(x)
+    x = keras.layers.Dense(10, activation='relu')(encoded_features)
+    x = keras.layers.Dropout(0.16)(x)
+    x = keras.layers.Dense(10, activation='relu')(x)
+    x = keras.layers.Dropout(0.16)(x)
+    x = keras.layers.Dense(5, activation='relu')(x)
+    x = keras.layers.Dropout(0.16)(x)
+    predictions = keras.layers.Dense(1, activation='linear')(x)
+    # instead of SIGMOID
 
     self.model = keras.Model(inputs=encoded_features, outputs=predictions)
     self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
 
-    inference_model = keras.Model(inputs=dict_inputs, outputs=predictions)
+    # inference_model = keras.Model(inputs=dict_inputs, outputs=predictions)
 
 
 
