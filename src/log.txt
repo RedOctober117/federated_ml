@@ -2802,3 +2802,566 @@ test_run | INFO flwr 2024-06-03 12:38:45,720 | server.py:110 |
 test_run | INFO flwr 2024-06-03 12:38:45,720 | server.py:111 | [ROUND 7]
 test_run | INFO flwr 2024-06-03 12:38:45,948 | server.py:224 | configure_fit: strategy sampled 2 clients (out of 2)
 test_run | INFO flwr 2024-06-03 12:38:45,972 | server.py:238 | aggregate_fit: received 0 results and 2 failures
+test_run | INFO flwr 2024-06-03 20:25:51,909 | app.py:150 | Starting Flower server, config: num_rounds=75, no round_timeout
+test_run | INFO flwr 2024-06-03 20:25:52,231 | app.py:163 | Flower ECE: gRPC server running (75 rounds), SSL is disabled
+test_run | INFO flwr 2024-06-03 20:25:52,231 | server.py:92 | [INIT]
+test_run | INFO flwr 2024-06-03 20:25:52,231 | server.py:279 | Requesting initial parameters from one random client
+test_run | INFO flwr 2024-06-03 20:26:06,289 | server.py:285 | Received initial parameters from one random client
+test_run | INFO flwr 2024-06-03 20:26:06,289 | server.py:94 | Evaluating initial global parameters
+test_run | INFO flwr 2024-06-03 20:26:06,289 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:26:06,290 | server.py:111 | [ROUND 1]
+test_run | INFO flwr 2024-06-03 20:26:06,290 | server.py:224 | configure_fit: strategy sampled 5 clients (out of 5)
+test_run | INFO flwr 2024-06-03 20:26:10,464 | server.py:238 | aggregate_fit: received 5 results and 0 failures
+test_run | WARNING flwr 2024-06-03 20:26:10,466 | fedavg.py:252 | No fit_metrics_aggregation_fn provided
+test_run | INFO flwr 2024-06-03 20:26:10,466 | server.py:176 | configure_evaluate: strategy sampled 10 clients (out of 10)
+test_run | INFO flwr 2024-06-03 20:26:10,723 | server.py:190 | aggregate_evaluate: received 0 results and 10 failures
+test_run | INFO flwr 2024-06-03 20:26:10,723 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:26:10,723 | server.py:111 | [ROUND 2]
+test_run | INFO flwr 2024-06-03 20:28:11,590 | server.py:224 | configure_fit: strategy sampled 2 clients (out of 2)
+test_run | INFO flwr 2024-06-03 20:28:13,266 | server.py:238 | aggregate_fit: received 2 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:28:13,267 | server.py:176 | configure_evaluate: strategy sampled 21 clients (out of 21)
+test_run | INFO flwr 2024-06-03 20:28:14,006 | server.py:190 | aggregate_evaluate: received 0 results and 21 failures
+test_run | INFO flwr 2024-06-03 20:28:14,007 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:28:14,011 | server.py:111 | [ROUND 3]
+test_run | INFO flwr 2024-06-03 20:37:01,274 | app.py:150 | Starting Flower server, config: num_rounds=75, no round_timeout
+test_run | INFO flwr 2024-06-03 20:37:01,308 | app.py:163 | Flower ECE: gRPC server running (75 rounds), SSL is disabled
+test_run | INFO flwr 2024-06-03 20:37:01,308 | server.py:92 | [INIT]
+test_run | INFO flwr 2024-06-03 20:37:01,308 | server.py:279 | Requesting initial parameters from one random client
+test_run | INFO flwr 2024-06-03 20:37:24,012 | app.py:150 | Starting Flower server, config: num_rounds=75, no round_timeout
+test_run | INFO flwr 2024-06-03 20:37:24,079 | app.py:163 | Flower ECE: gRPC server running (75 rounds), SSL is disabled
+test_run | INFO flwr 2024-06-03 20:37:24,079 | server.py:92 | [INIT]
+test_run | INFO flwr 2024-06-03 20:37:24,080 | server.py:279 | Requesting initial parameters from one random client
+test_run | INFO flwr 2024-06-03 20:37:25,408 | server.py:285 | Received initial parameters from one random client
+test_run | INFO flwr 2024-06-03 20:37:25,408 | server.py:94 | Evaluating initial global parameters
+test_run | INFO flwr 2024-06-03 20:37:25,409 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:25,409 | server.py:111 | [ROUND 1]
+test_run | INFO flwr 2024-06-03 20:37:25,409 | server.py:224 | configure_fit: strategy sampled 2 clients (out of 2)
+test_run | INFO flwr 2024-06-03 20:37:27,754 | server.py:238 | aggregate_fit: received 2 results and 0 failures
+test_run | WARNING flwr 2024-06-03 20:37:27,756 | fedavg.py:252 | No fit_metrics_aggregation_fn provided
+test_run | INFO flwr 2024-06-03 20:37:27,757 | server.py:176 | configure_evaluate: strategy sampled 21 clients (out of 21)
+test_run | INFO flwr 2024-06-03 20:37:28,185 | server.py:190 | aggregate_evaluate: received 21 results and 0 failures
+test_run | WARNING flwr 2024-06-03 20:37:28,186 | fedavg.py:283 | No evaluate_metrics_aggregation_fn provided
+test_run | INFO flwr 2024-06-03 20:37:28,186 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:28,186 | server.py:111 | [ROUND 2]
+test_run | INFO flwr 2024-06-03 20:37:28,186 | server.py:224 | configure_fit: strategy sampled 24 clients (out of 24)
+test_run | INFO flwr 2024-06-03 20:37:32,865 | server.py:238 | aggregate_fit: received 24 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:32,873 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:33,083 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:33,083 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:33,083 | server.py:111 | [ROUND 3]
+test_run | INFO flwr 2024-06-03 20:37:33,083 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:35,744 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:35,753 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:35,887 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:35,887 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:35,891 | server.py:111 | [ROUND 4]
+test_run | INFO flwr 2024-06-03 20:37:35,892 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:37,466 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:37,476 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:37,608 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:37,609 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:37,615 | server.py:111 | [ROUND 5]
+test_run | INFO flwr 2024-06-03 20:37:37,616 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:39,215 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:39,226 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:39,361 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:39,361 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:39,366 | server.py:111 | [ROUND 6]
+test_run | INFO flwr 2024-06-03 20:37:39,367 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:41,314 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:41,324 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:41,485 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:41,486 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:41,487 | server.py:111 | [ROUND 7]
+test_run | INFO flwr 2024-06-03 20:37:41,488 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:43,457 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:43,467 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:43,599 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:43,599 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:43,600 | server.py:111 | [ROUND 8]
+test_run | INFO flwr 2024-06-03 20:37:43,608 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:45,158 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:45,167 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:45,299 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:45,300 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:45,300 | server.py:111 | [ROUND 9]
+test_run | INFO flwr 2024-06-03 20:37:45,305 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:46,877 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:46,887 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:47,011 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:47,012 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:47,012 | server.py:111 | [ROUND 10]
+test_run | INFO flwr 2024-06-03 20:37:47,017 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:48,593 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:48,602 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:48,735 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:48,735 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:48,736 | server.py:111 | [ROUND 11]
+test_run | INFO flwr 2024-06-03 20:37:48,743 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:50,329 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:50,338 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:50,466 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:50,466 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:50,475 | server.py:111 | [ROUND 12]
+test_run | INFO flwr 2024-06-03 20:37:50,477 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:52,031 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:52,040 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:52,174 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:52,174 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:52,175 | server.py:111 | [ROUND 13]
+test_run | INFO flwr 2024-06-03 20:37:52,183 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:53,739 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:53,749 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:53,873 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:53,874 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:53,880 | server.py:111 | [ROUND 14]
+test_run | INFO flwr 2024-06-03 20:37:53,882 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:55,450 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:55,459 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:55,593 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:55,594 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:55,600 | server.py:111 | [ROUND 15]
+test_run | INFO flwr 2024-06-03 20:37:55,601 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:57,208 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:57,218 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:57,344 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:57,344 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:57,345 | server.py:111 | [ROUND 16]
+test_run | INFO flwr 2024-06-03 20:37:57,352 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:58,935 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:58,944 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:37:59,074 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:37:59,075 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:37:59,075 | server.py:111 | [ROUND 17]
+test_run | INFO flwr 2024-06-03 20:37:59,083 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:00,638 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:00,648 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:00,776 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:00,777 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:00,782 | server.py:111 | [ROUND 18]
+test_run | INFO flwr 2024-06-03 20:38:00,783 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:02,447 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:02,460 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:02,620 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:02,620 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:02,621 | server.py:111 | [ROUND 19]
+test_run | INFO flwr 2024-06-03 20:38:02,634 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:04,334 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:04,344 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:04,473 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:04,474 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:04,474 | server.py:111 | [ROUND 20]
+test_run | INFO flwr 2024-06-03 20:38:04,481 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:06,271 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:06,280 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:06,395 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:06,395 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:06,396 | server.py:111 | [ROUND 21]
+test_run | INFO flwr 2024-06-03 20:38:06,402 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:08,567 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:08,578 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:08,730 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:08,731 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:08,731 | server.py:111 | [ROUND 22]
+test_run | INFO flwr 2024-06-03 20:38:08,737 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:10,654 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:10,663 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:10,790 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:10,790 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:10,791 | server.py:111 | [ROUND 23]
+test_run | INFO flwr 2024-06-03 20:38:10,798 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:13,533 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:13,545 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:13,725 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:13,726 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:13,727 | server.py:111 | [ROUND 24]
+test_run | INFO flwr 2024-06-03 20:38:13,743 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:15,512 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:15,521 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:15,659 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:15,659 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:15,660 | server.py:111 | [ROUND 25]
+test_run | INFO flwr 2024-06-03 20:38:15,666 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:17,361 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:17,371 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:17,512 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:17,512 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:17,513 | server.py:111 | [ROUND 26]
+test_run | INFO flwr 2024-06-03 20:38:17,522 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:19,235 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:19,245 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:19,399 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:19,399 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:19,400 | server.py:111 | [ROUND 27]
+test_run | INFO flwr 2024-06-03 20:38:19,409 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:21,032 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:21,042 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:21,191 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:21,191 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:21,192 | server.py:111 | [ROUND 28]
+test_run | INFO flwr 2024-06-03 20:38:21,200 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:22,821 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:22,831 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:22,976 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:22,977 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:22,979 | server.py:111 | [ROUND 29]
+test_run | INFO flwr 2024-06-03 20:38:22,980 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:24,632 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:24,643 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:24,786 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:24,787 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:24,792 | server.py:111 | [ROUND 30]
+test_run | INFO flwr 2024-06-03 20:38:24,794 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:26,427 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:26,437 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:26,580 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:26,580 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:26,582 | server.py:111 | [ROUND 31]
+test_run | INFO flwr 2024-06-03 20:38:26,590 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:28,296 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:28,306 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:28,451 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:28,452 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:28,466 | server.py:111 | [ROUND 32]
+test_run | INFO flwr 2024-06-03 20:38:28,466 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:30,220 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:30,230 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:30,389 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:30,390 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:30,391 | server.py:111 | [ROUND 33]
+test_run | INFO flwr 2024-06-03 20:38:30,405 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:32,261 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:32,270 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:32,414 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:32,415 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:32,415 | server.py:111 | [ROUND 34]
+test_run | INFO flwr 2024-06-03 20:38:32,425 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:34,261 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:34,272 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:34,420 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:34,420 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:34,421 | server.py:111 | [ROUND 35]
+test_run | INFO flwr 2024-06-03 20:38:34,428 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:36,059 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:36,068 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:36,209 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:36,210 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:36,211 | server.py:111 | [ROUND 36]
+test_run | INFO flwr 2024-06-03 20:38:36,218 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:37,812 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:37,822 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:37,961 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:37,962 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:37,972 | server.py:111 | [ROUND 37]
+test_run | INFO flwr 2024-06-03 20:38:37,973 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:39,561 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:39,571 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:39,715 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:39,715 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:39,716 | server.py:111 | [ROUND 38]
+test_run | INFO flwr 2024-06-03 20:38:39,723 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:41,343 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:41,352 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:41,493 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:41,493 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:41,495 | server.py:111 | [ROUND 39]
+test_run | INFO flwr 2024-06-03 20:38:41,504 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:43,238 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:43,248 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:43,391 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:43,391 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:43,397 | server.py:111 | [ROUND 40]
+test_run | INFO flwr 2024-06-03 20:38:43,397 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:44,993 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:45,003 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:45,144 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:45,145 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:45,146 | server.py:111 | [ROUND 41]
+test_run | INFO flwr 2024-06-03 20:38:45,151 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:46,746 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:46,756 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:46,897 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:46,897 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:46,899 | server.py:111 | [ROUND 42]
+test_run | INFO flwr 2024-06-03 20:38:46,906 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:48,506 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:48,516 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:48,666 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:48,667 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:48,668 | server.py:111 | [ROUND 43]
+test_run | INFO flwr 2024-06-03 20:38:48,674 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:50,276 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:50,286 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:50,421 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:50,422 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:50,423 | server.py:111 | [ROUND 44]
+test_run | INFO flwr 2024-06-03 20:38:50,431 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:52,040 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:52,050 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:52,194 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:52,195 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:52,197 | server.py:111 | [ROUND 45]
+test_run | INFO flwr 2024-06-03 20:38:52,203 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:53,807 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:53,817 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:53,955 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:53,956 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:53,958 | server.py:111 | [ROUND 46]
+test_run | INFO flwr 2024-06-03 20:38:53,966 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:55,555 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:55,564 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:55,718 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:55,718 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:55,719 | server.py:111 | [ROUND 47]
+test_run | INFO flwr 2024-06-03 20:38:55,719 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:57,342 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:57,352 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:57,497 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:57,498 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:57,506 | server.py:111 | [ROUND 48]
+test_run | INFO flwr 2024-06-03 20:38:57,507 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:59,146 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:59,156 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:38:59,296 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:38:59,298 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:38:59,304 | server.py:111 | [ROUND 49]
+test_run | INFO flwr 2024-06-03 20:38:59,304 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:00,908 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:00,918 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:01,075 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:01,075 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:01,078 | server.py:111 | [ROUND 50]
+test_run | INFO flwr 2024-06-03 20:39:01,079 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:02,679 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:02,689 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:02,831 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:02,831 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:02,832 | server.py:111 | [ROUND 51]
+test_run | INFO flwr 2024-06-03 20:39:02,840 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:04,559 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:04,568 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:04,715 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:04,715 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:04,716 | server.py:111 | [ROUND 52]
+test_run | INFO flwr 2024-06-03 20:39:04,725 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:06,338 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:06,348 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:06,492 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:06,492 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:06,501 | server.py:111 | [ROUND 53]
+test_run | INFO flwr 2024-06-03 20:39:06,502 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:08,098 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:08,108 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:08,247 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:08,247 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:08,252 | server.py:111 | [ROUND 54]
+test_run | INFO flwr 2024-06-03 20:39:08,253 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:09,846 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:09,856 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:09,991 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:09,991 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:09,997 | server.py:111 | [ROUND 55]
+test_run | INFO flwr 2024-06-03 20:39:09,998 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:11,592 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:11,603 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:11,740 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:11,740 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:11,745 | server.py:111 | [ROUND 56]
+test_run | INFO flwr 2024-06-03 20:39:11,745 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:13,362 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:13,371 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:13,511 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:13,511 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:13,512 | server.py:111 | [ROUND 57]
+test_run | INFO flwr 2024-06-03 20:39:13,521 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:15,115 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:15,126 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:15,270 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:15,271 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:15,279 | server.py:111 | [ROUND 58]
+test_run | INFO flwr 2024-06-03 20:39:15,280 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:16,875 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:16,885 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:17,025 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:17,026 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:17,027 | server.py:111 | [ROUND 59]
+test_run | INFO flwr 2024-06-03 20:39:17,035 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:18,623 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:18,633 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:18,777 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:18,777 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:18,784 | server.py:111 | [ROUND 60]
+test_run | INFO flwr 2024-06-03 20:39:18,785 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:20,371 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:20,380 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:20,519 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:20,519 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:20,520 | server.py:111 | [ROUND 61]
+test_run | INFO flwr 2024-06-03 20:39:20,525 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:22,169 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:22,179 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:22,323 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:22,324 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:22,333 | server.py:111 | [ROUND 62]
+test_run | INFO flwr 2024-06-03 20:39:22,337 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:23,915 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:23,924 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:24,067 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:24,067 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:24,076 | server.py:111 | [ROUND 63]
+test_run | INFO flwr 2024-06-03 20:39:24,077 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:25,677 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:25,687 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:25,818 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:25,819 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:25,825 | server.py:111 | [ROUND 64]
+test_run | INFO flwr 2024-06-03 20:39:25,825 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:27,501 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:27,511 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:27,650 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:27,650 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:27,651 | server.py:111 | [ROUND 65]
+test_run | INFO flwr 2024-06-03 20:39:27,659 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:29,260 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:29,271 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:29,416 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:29,417 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:29,418 | server.py:111 | [ROUND 66]
+test_run | INFO flwr 2024-06-03 20:39:29,428 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:31,019 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:31,029 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:31,165 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:31,165 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:31,170 | server.py:111 | [ROUND 67]
+test_run | INFO flwr 2024-06-03 20:39:31,175 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:32,783 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:32,793 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:32,931 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:32,932 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:32,932 | server.py:111 | [ROUND 68]
+test_run | INFO flwr 2024-06-03 20:39:32,940 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:34,551 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:34,561 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:34,707 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:34,708 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:34,714 | server.py:111 | [ROUND 69]
+test_run | INFO flwr 2024-06-03 20:39:34,715 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:36,319 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:36,328 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:36,470 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:36,470 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:36,471 | server.py:111 | [ROUND 70]
+test_run | INFO flwr 2024-06-03 20:39:36,479 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:38,084 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:38,094 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:38,232 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:38,232 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:38,239 | server.py:111 | [ROUND 71]
+test_run | INFO flwr 2024-06-03 20:39:38,240 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:39,846 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:39,926 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:40,065 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:40,066 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:40,072 | server.py:111 | [ROUND 72]
+test_run | INFO flwr 2024-06-03 20:39:40,073 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:41,722 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:41,732 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:41,871 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:41,872 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:41,873 | server.py:111 | [ROUND 73]
+test_run | INFO flwr 2024-06-03 20:39:41,876 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:43,601 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:43,611 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:43,770 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:43,771 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:43,771 | server.py:111 | [ROUND 74]
+test_run | INFO flwr 2024-06-03 20:39:43,783 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:45,464 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:45,473 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:45,613 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:45,613 | server.py:110 | 
+test_run | INFO flwr 2024-06-03 20:39:45,616 | server.py:111 | [ROUND 75]
+test_run | INFO flwr 2024-06-03 20:39:45,617 | server.py:224 | configure_fit: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:47,343 | server.py:238 | aggregate_fit: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:47,353 | server.py:176 | configure_evaluate: strategy sampled 30 clients (out of 30)
+test_run | INFO flwr 2024-06-03 20:39:47,506 | server.py:190 | aggregate_evaluate: received 30 results and 0 failures
+test_run | INFO flwr 2024-06-03 20:39:47,506 | server.py:487 | 
+test_run | INFO flwr 2024-06-03 20:39:47,512 | server.py:488 | [SUMMARY]
+test_run | INFO flwr 2024-06-03 20:39:47,512 | server.py:489 | Run finished 75 rounds in 142.10s
+test_run | INFO flwr 2024-06-03 20:39:47,516 | server.py:492 | History (loss, distributed):
+test_run | INFO flwr 2024-06-03 20:39:47,517 | server.py:494 | 	('\tround 1: 52.71717543829055\n'
+test_run | INFO flwr 2024-06-03 20:39:47,519 | server.py:494 | 	 '\tround 2: 50.05230153401693\n'
+test_run | INFO flwr 2024-06-03 20:39:47,519 | server.py:494 | 	 '\tround 3: 44.41448809305827\n'
+test_run | INFO flwr 2024-06-03 20:39:47,519 | server.py:494 | 	 '\tround 4: 33.39564145406087\n'
+test_run | INFO flwr 2024-06-03 20:39:47,519 | server.py:494 | 	 '\tround 5: 19.729793866475422\n'
+test_run | INFO flwr 2024-06-03 20:39:47,520 | server.py:494 | 	 '\tround 6: 13.093201319376627\n'
+test_run | INFO flwr 2024-06-03 20:39:47,521 | server.py:494 | 	 '\tround 7: 11.15805295308431\n'
+test_run | INFO flwr 2024-06-03 20:39:47,522 | server.py:494 | 	 '\tround 8: 9.835401757558186\n'
+test_run | INFO flwr 2024-06-03 20:39:47,524 | server.py:494 | 	 '\tround 9: 8.792045974731446\n'
+test_run | INFO flwr 2024-06-03 20:39:47,527 | server.py:494 | 	 '\tround 10: 8.025327968597413\n'
+test_run | INFO flwr 2024-06-03 20:39:47,530 | server.py:494 | 	 '\tround 11: 7.3882431825002035\n'
+test_run | INFO flwr 2024-06-03 20:39:47,531 | server.py:494 | 	 '\tround 12: 6.854471190770467\n'
+test_run | INFO flwr 2024-06-03 20:39:47,531 | server.py:494 | 	 '\tround 13: 6.469960165023804\n'
+test_run | INFO flwr 2024-06-03 20:39:47,531 | server.py:494 | 	 '\tround 14: 5.938645251592001\n'
+test_run | INFO flwr 2024-06-03 20:39:47,532 | server.py:494 | 	 '\tround 15: 5.243812513351441\n'
+test_run | INFO flwr 2024-06-03 20:39:47,532 | server.py:494 | 	 '\tround 16: 4.839172442754109\n'
+test_run | INFO flwr 2024-06-03 20:39:47,532 | server.py:494 | 	 '\tround 17: 4.6193456490834555\n'
+test_run | INFO flwr 2024-06-03 20:39:47,533 | server.py:494 | 	 '\tround 18: 4.419936227798462\n'
+test_run | INFO flwr 2024-06-03 20:39:47,533 | server.py:494 | 	 '\tround 19: 4.133050711949666\n'
+test_run | INFO flwr 2024-06-03 20:39:47,534 | server.py:494 | 	 '\tround 20: 4.099743127822876\n'
+test_run | INFO flwr 2024-06-03 20:39:47,536 | server.py:494 | 	 '\tround 21: 3.92450164159139\n'
+test_run | INFO flwr 2024-06-03 20:39:47,536 | server.py:494 | 	 '\tround 22: 3.904246997833252\n'
+test_run | INFO flwr 2024-06-03 20:39:47,537 | server.py:494 | 	 '\tround 23: 3.832909576098124\n'
+test_run | INFO flwr 2024-06-03 20:39:47,537 | server.py:494 | 	 '\tround 24: 3.810353922843933\n'
+test_run | INFO flwr 2024-06-03 20:39:47,537 | server.py:494 | 	 '\tround 25: 3.8019328037897746\n'
+test_run | INFO flwr 2024-06-03 20:39:47,537 | server.py:494 | 	 '\tround 26: 3.7252834320068358\n'
+test_run | INFO flwr 2024-06-03 20:39:47,538 | server.py:494 | 	 '\tround 27: 3.6375873645146686\n'
+test_run | INFO flwr 2024-06-03 20:39:47,538 | server.py:494 | 	 '\tround 28: 3.598824954032898\n'
+test_run | INFO flwr 2024-06-03 20:39:47,538 | server.py:494 | 	 '\tround 29: 3.602515172958374\n'
+test_run | INFO flwr 2024-06-03 20:39:47,540 | server.py:494 | 	 '\tround 30: 3.5792044242223104\n'
+test_run | INFO flwr 2024-06-03 20:39:47,542 | server.py:494 | 	 '\tround 31: 3.543021559715271\n'
+test_run | INFO flwr 2024-06-03 20:39:47,545 | server.py:494 | 	 '\tround 32: 3.4139529546101888\n'
+test_run | INFO flwr 2024-06-03 20:39:47,547 | server.py:494 | 	 '\tround 33: 3.392903518676758\n'
+test_run | INFO flwr 2024-06-03 20:39:47,549 | server.py:494 | 	 '\tround 34: 3.3474597215652464\n'
+test_run | INFO flwr 2024-06-03 20:39:47,551 | server.py:494 | 	 '\tround 35: 3.3707627296447753\n'
+test_run | INFO flwr 2024-06-03 20:39:47,556 | server.py:494 | 	 '\tround 36: 3.3445332527160643\n'
+test_run | INFO flwr 2024-06-03 20:39:47,559 | server.py:494 | 	 '\tround 37: 3.319415267308553\n'
+test_run | INFO flwr 2024-06-03 20:39:47,559 | server.py:494 | 	 '\tround 38: 3.2970867713292438\n'
+test_run | INFO flwr 2024-06-03 20:39:47,560 | server.py:494 | 	 '\tround 39: 3.3294978777567548\n'
+test_run | INFO flwr 2024-06-03 20:39:47,560 | server.py:494 | 	 '\tround 40: 3.3059515078862507\n'
+test_run | INFO flwr 2024-06-03 20:39:47,560 | server.py:494 | 	 '\tround 41: 3.2683384577433268\n'
+test_run | INFO flwr 2024-06-03 20:39:47,560 | server.py:494 | 	 '\tround 42: 3.3148083051045734\n'
+test_run | INFO flwr 2024-06-03 20:39:47,560 | server.py:494 | 	 '\tround 43: 3.2211109002431235\n'
+test_run | INFO flwr 2024-06-03 20:39:47,561 | server.py:494 | 	 '\tround 44: 3.197901789347331\n'
+test_run | INFO flwr 2024-06-03 20:39:47,561 | server.py:494 | 	 '\tround 45: 3.273044149080912\n'
+test_run | INFO flwr 2024-06-03 20:39:47,561 | server.py:494 | 	 '\tround 46: 3.219580968221029\n'
+test_run | INFO flwr 2024-06-03 20:39:47,561 | server.py:494 | 	 '\tround 47: 3.24420006275177\n'
+test_run | INFO flwr 2024-06-03 20:39:47,563 | server.py:494 | 	 '\tround 48: 3.2099464416503904\n'
+test_run | INFO flwr 2024-06-03 20:39:47,564 | server.py:494 | 	 '\tround 49: 3.1469417889912923\n'
+test_run | INFO flwr 2024-06-03 20:39:47,565 | server.py:494 | 	 '\tround 50: 3.145134449005127\n'
+test_run | INFO flwr 2024-06-03 20:39:47,566 | server.py:494 | 	 '\tround 51: 3.058947205543518\n'
+test_run | INFO flwr 2024-06-03 20:39:47,568 | server.py:494 | 	 '\tround 52: 3.115078822771708\n'
+test_run | INFO flwr 2024-06-03 20:39:47,570 | server.py:494 | 	 '\tround 53: 3.08283904393514\n'
+test_run | INFO flwr 2024-06-03 20:39:47,572 | server.py:494 | 	 '\tround 54: 3.0908525705337526\n'
+test_run | INFO flwr 2024-06-03 20:39:47,574 | server.py:494 | 	 '\tround 55: 3.0351298729578655\n'
+test_run | INFO flwr 2024-06-03 20:39:47,578 | server.py:494 | 	 '\tround 56: 3.0111868540445963\n'
+test_run | INFO flwr 2024-06-03 20:39:47,578 | server.py:494 | 	 '\tround 57: 2.993197441101074\n'
+test_run | INFO flwr 2024-06-03 20:39:47,580 | server.py:494 | 	 '\tround 58: 3.038553897539775\n'
+test_run | INFO flwr 2024-06-03 20:39:47,584 | server.py:494 | 	 '\tround 59: 2.988125228881836\n'
+test_run | INFO flwr 2024-06-03 20:39:47,587 | server.py:494 | 	 '\tround 60: 2.949948294957479\n'
+test_run | INFO flwr 2024-06-03 20:39:47,587 | server.py:494 | 	 '\tround 61: 2.9555625756581625\n'
+test_run | INFO flwr 2024-06-03 20:39:47,591 | server.py:494 | 	 '\tround 62: 2.9877723773320515\n'
+test_run | INFO flwr 2024-06-03 20:39:47,591 | server.py:494 | 	 '\tround 63: 2.9886454264322917\n'
+test_run | INFO flwr 2024-06-03 20:39:47,596 | server.py:494 | 	 '\tround 64: 2.940998903910319\n'
+test_run | INFO flwr 2024-06-03 20:39:47,601 | server.py:494 | 	 '\tround 65: 2.967649292945862\n'
+test_run | INFO flwr 2024-06-03 20:39:47,607 | server.py:494 | 	 '\tround 66: 2.908906904856364\n'
+test_run | INFO flwr 2024-06-03 20:39:47,611 | server.py:494 | 	 '\tround 67: 2.980693554878235\n'
+test_run | INFO flwr 2024-06-03 20:39:47,617 | server.py:494 | 	 '\tround 68: 2.9473280986150105\n'
+test_run | INFO flwr 2024-06-03 20:39:47,617 | server.py:494 | 	 '\tround 69: 2.8824629545211793\n'
+test_run | INFO flwr 2024-06-03 20:39:47,622 | server.py:494 | 	 '\tround 70: 2.907862424850464\n'
+test_run | INFO flwr 2024-06-03 20:39:47,625 | server.py:494 | 	 '\tround 71: 2.8978375434875487\n'
+test_run | INFO flwr 2024-06-03 20:39:47,628 | server.py:494 | 	 '\tround 72: 2.9285230239232383\n'
+test_run | INFO flwr 2024-06-03 20:39:47,632 | server.py:494 | 	 '\tround 73: 2.9206441481908163\n'
+test_run | INFO flwr 2024-06-03 20:39:47,633 | server.py:494 | 	 '\tround 74: 2.8905532201131185\n'
+test_run | INFO flwr 2024-06-03 20:39:47,637 | server.py:494 | 	 '\tround 75: 2.8579095204671225\n')
+test_run | INFO flwr 2024-06-03 20:39:47,641 | server.py:495 | 

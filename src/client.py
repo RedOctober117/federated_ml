@@ -78,7 +78,7 @@ class ClientModel(fl.client.NumPyClient):
   
   def fit(self, parameters, config):
     self.model.set_weights(parameters)
-    self.model.fit(self.preprocessed_train_ds, epochs=10, validation_data=self.preprocessed_val_ds)
+    self.history = self.model.fit(self.preprocessed_train_ds, epochs=10, validation_data=self.preprocessed_val_ds)
 
     return self.model.get_weights(), len(self.preprocessed_train_ds), {}
   
@@ -147,15 +147,25 @@ class ClientModel(fl.client.NumPyClient):
     # instead of SIGMOID
 
     self.model = keras.Model(inputs=encoded_features, outputs=predictions)
-    self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+    self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
 
     # inference_model = keras.Model(inputs=dict_inputs, outputs=predictions)
+  
+  # def plot_loss(self):
+  #   epochs = self.history.epoch
+  #   hist = pd.DataFrame(self.history.history)
+  #   mse = hist['mean_squared_error']
+
+  #   plot_the_loss_curve(epochs, mse, self.history.history["val_mean_squared_error"])
+
+
 
 
 
 def client_fn(cid: str):
-  global i
   return ClientModel(path, sys.argv[1:][0]).to_client()
+
+# model = ClientModel(path, sys.argv[1:][0])
 
 # history = training_model.fit(
 #     preprocessed_train_ds,
@@ -164,16 +174,11 @@ def client_fn(cid: str):
 #     verbose=2,
 # )
 
-# epochs = history.epoch
-# hist = pd.DataFrame(history.history)
-# mse = hist['mean_squared_error']
 
-# plot_the_loss_curve(epochs, mse, history.history["val_mean_squared_error"])
 
 # Start
 fl.client.start_client(
   server_address='127.0.0.1:8080',
-  # Ignore "argument of type 'ClientModel'" error
   client=ClientModel(path, sys.argv[1:][0]).to_client(),
   max_retries=10000,
 )
