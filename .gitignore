@@ -5,6 +5,7 @@ share/
 pyvenv.cfg
 bin
 lib64
+log.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -59,7 +59,6 @@ with open('station_ids.txt', 'r') as file:
     stations.append(line.strip('\n').strip())
 
 rng.shuffle(stations)
-i = 0
 # with open('station_id_occurances.txt', 'r') as file:
 #   for line in file.readlines():
 #     clean = line.strip('\n').strip()

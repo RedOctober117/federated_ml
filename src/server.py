@@ -5,26 +5,6 @@ import tensorflow as tf
 #     input_shape=(32, 32, 3), weights=None, 
 # )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 fl.common.logger.configure(identifier='test_run', filename='log.txt')
 
 strategy = fl.server.strategy.FedAvg(
@@ -34,7 +14,7 @@ strategy = fl.server.strategy.FedAvg(
 
 fl.server.start_server(
     server_address="0.0.0.0:8080",
-    config=fl.server.ServerConfig(num_rounds=75),
+    config=fl.server.ServerConfig(num_rounds=50),
     strategy=strategy,
 )
 
