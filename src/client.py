@@ -1,3 +1,4 @@
+from calendar import EPOCH
 import tensorflow as tf
 import flwr as fl
 from flwr.server.strategy import FedAvg
@@ -8,7 +9,11 @@ from matplotlib import pyplot as plt
 from keras.utils import FeatureSpace
 import sys
 from flwr.common.logger import log
-from logging import INFO, DEBUG
+from logging import INFO, DEBUG, log
+from matplotlib.backends.backend_pdf import PdfPages
+import time
+
+i = 1
 
 rng = np.random.default_rng()
 
@@ -16,15 +21,16 @@ def df_to_ds(df, target):
   dataframe = df.copy()
   labels = dataframe.pop(target)
   ds = tf.data.Dataset.from_tensor_slices((dict(dataframe), labels))
-  ds = ds.shuffle(buffer_size=len(dataframe))
+  # ds = ds.shuffle(buffer_size=len(dataframe))
   return ds
 
-def plot_the_loss_curve(epochs, mse_training, mse_validation):
+def plot_the_loss_curve(id, epochs, mse_training, mse_validation):
   """Plot a curve of loss vs. epoch."""
 
-  plt.figure()
+  f = plt.figure()
   plt.xlabel("Epoch")
   plt.ylabel("Mean Squared Error")
+  plt.title(f'Epoch {time.time()} for station {id}')
 
   plt.plot(epochs, mse_training, label="Training Loss")
   plt.plot(epochs, mse_validation, label="Validation Loss")
@@ -38,7 +44,15 @@ def plot_the_loss_curve(epochs, mse_training, mse_validation):
 
   plt.ylim([bottom_of_y_axis, top_of_y_axis])
   plt.legend()
-  plt.show()
+  global i
+  # pdf = PdfPages(f'figures\\{i}{id}_figures.pdf')
+  # pdf.savefig(f)
+  # pdf.close()
+  plt.savefig(f'figures\\{id}_{i}.png')
+  i += 1
+  plt.clf()
+  
+  # plt.show(block=True)
 
 def slice_df(df, query):
   # Define Model
@@ -54,7 +68,7 @@ path = 'normalized_ev_data_reduced.csv'
 
 stations = []
 
-with open('station_ids.txt', 'r') as file:
+with open('station_ids_greater_30.txt', 'r') as file:
   for line in file.readlines():
     stations.append(line.strip('\n').strip())
 
@@ -77,25 +91,28 @@ class ClientModel(fl.client.NumPyClient):
   
   def fit(self, parameters, config):
     self.model.set_weights(parameters)
-    self.history = self.model.fit(self.preprocessed_train_ds, epochs=10, validation_data=self.preprocessed_val_ds)
+    self.history = self.model.fit(self.preprocessed_train_ds, epochs=600, validation_data=self.preprocessed_val_ds)
+
+    # self.plot_data.append((self.id, self.history.epoch, self.history.history['mean_squared_error'], self.history.history["val_mean_squared_error"]))
+    self.plot_loss()
 
     return self.model.get_weights(), len(self.preprocessed_train_ds), {}
   
   def evaluate(self, parameters, config):
     self.model.set_weights(parameters)
-    loss, accuracy = self.model.evaluate(self.preprocessed_train_ds)
+    self.loss, self.accuracy = self.model.evaluate(self.preprocessed_train_ds)
 
-    log(DEBUG, f'Client trained {self.id} at {accuracy}% accuracy, {loss} loss')
-
-    return loss, len(self.preprocessed_train_ds), {'accuracy': accuracy}
+    return self.loss, len(self.preprocessed_train_ds), {'accuracy': self.accuracy}
   
   def __init__(self, path, id):
+    self.plot_data = []
     self.id = id
     log(INFO, f'Creating model based on {id}')
     data_df = pd.read_csv(path)
     data_df = slice_df(data_df, str(f'stationId != {id}'), )
+    data_df = data_df.drop('created', axis=1)
 
-    val_df = data_df.sample(frac=0.1, random_state=1337)
+    val_df = data_df.sample(frac=0.2, random_state=1337)
     train_df = data_df.drop(val_df.index)
 
     print(f'Using {len(train_df)} samples for training, {len(val_df)} for validation.')
@@ -110,7 +127,7 @@ class ClientModel(fl.client.NumPyClient):
     feature_space = FeatureSpace(
       features={
         'chargeTimeHrs': 'float_normalized',
-        'created': 'float_discretized',
+        # 'created': 'float_discretized',
       },
 
       output_mode='concat'
@@ -136,13 +153,27 @@ class ClientModel(fl.client.NumPyClient):
     dict_inputs = feature_space.get_inputs()
     encoded_features = feature_space.get_encoded_features()
 
+    # https://machinelearningmastery.com/time-series-prediction-lstm-recurrent-neural-networks-python-keras/
+
+    look_back = 1
+
     x = keras.layers.Dense(10, activation='relu')(encoded_features)
     x = keras.layers.Dropout(0.16)(x)
     x = keras.layers.Dense(10, activation='relu')(x)
     x = keras.layers.Dropout(0.16)(x)
-    x = keras.layers.Dense(5, activation='relu')(x)
+    x = keras.layers.Dense(10, activation='relu')(x)
     x = keras.layers.Dropout(0.16)(x)
     predictions = keras.layers.Dense(1, activation='linear')(x)
+
+    # model = keras.Sequential()
+    # model.add(keras.layers.LSTM(4))
+    
+    # x = keras.layers.Dense(4, activation='relu')(encoded_features)
+    # # lstm = keras.layers.LSTM(4)
+    # # output = lstm(encoded_features)
+    # x = keras.layers.LSTM(4, return_sequences=True, return_state=True)
+    # predictions = keras.layers.Dense(1, activation='linear')(x)
+
     # instead of SIGMOID
 
     self.model = keras.Model(inputs=encoded_features, outputs=predictions)
@@ -150,12 +181,12 @@ class ClientModel(fl.client.NumPyClient):
 
     # inference_model = keras.Model(inputs=dict_inputs, outputs=predictions)
   
-  # def plot_loss(self):
-  #   epochs = self.history.epoch
-  #   hist = pd.DataFrame(self.history.history)
-  #   mse = hist['mean_squared_error']
+  def plot_loss(self):
+    epochs = self.history.epoch
+    hist = pd.DataFrame(self.history.history)
+    mse = hist['mean_squared_error']
 
-  #   plot_the_loss_curve(epochs, mse, self.history.history["val_mean_squared_error"])
+    plot_the_loss_curve(self.id, epochs, mse, self.history.history["val_mean_squared_error"])
 
 
 
@@ -181,6 +212,8 @@ fl.client.start_client(
   client=ClientModel(path, sys.argv[1:][0]).to_client(),
   max_retries=10000,
 )
+
+
 
 # NUM_CLIENTS=5
 
