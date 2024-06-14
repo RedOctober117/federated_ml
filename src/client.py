@@ -11,7 +11,7 @@ import keras
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-from keras.utils import FeatureSpace
+# from keras.utils import FeatureSpace
 import sys
 from flwr.common.logger import log
 from logging import INFO, DEBUG, log
@@ -27,9 +27,9 @@ retained_columns = ['connectionTime', 'disconnectTime', 'kWhDelivered', 'station
 sliced_data_df = data_df.loc[:, retained_columns]
 
 normalized_df = sliced_data_df.copy(deep=True)
-# normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].mean()) / normalized_df['kWhDelivered'].std()
+normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].mean()) / normalized_df['kWhDelivered'].std()
 # normalized_df['kWhDelivered'] = 1 / (1 + math.e**(-1 * normalized_df['kWhDelivered']))
-normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].min()) / (normalized_df['kWhDelivered'].max() - normalized_df['kWhDelivered'].min()) 
+# normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].min()) / (normalized_df['kWhDelivered'].max() - normalized_df['kWhDelivered'].min()) 
 
 normalized_df['connectionTime'] = pd.to_datetime(normalized_df['connectionTime'], format='%a, %d %b %Y %H:%M:%S %Z', utc=True)
 normalized_df['disconnectTime'] = pd.to_datetime(normalized_df['disconnectTime'], format='%a, %d %b %Y %H:%M:%S %Z', utc=True)
@@ -40,7 +40,8 @@ normalized_df['chargeTime'] = (normalized_df['disconnectTime'] - normalized_df['
 for line in range(len(normalized_df['chargeTime'])):
   normalized_df.at[line, 'chargeTime'] = normalized_df.at[line, 'chargeTime'].seconds
 
-normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].min()) / (normalized_df['chargeTime'].max() - normalized_df['chargeTime'].min()) 
+normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].mean()) / normalized_df['chargeTime'].std()
+# normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].min()) / (normalized_df['chargeTime'].max() - normalized_df['chargeTime'].min()) 
 
 
 # for line in range(len(normalized_df['chargeTime'])):
@@ -77,9 +78,9 @@ plt.show()
 normalized_df = normalized_df.drop(normalized_df.query(str(f'stationID != 178817')).index)
 normalized_df_clean = normalized_df.drop(['connectionTime', 'disconnectTime', 'stationID'], axis=1)
 
-training_df = normalized_df_clean.copy()
-# training_df = normalized_df_clean[:int(len(normalized_df_clean) * .7)]
-test_df = normalized_df_clean[int(len(normalized_df_clean) * .7):]
+# training_df = normalized_df_clean.copy(deep=True)
+training_df = normalized_df_clean[:int(len(normalized_df_clean) * .7)]
+test_df = normalized_df_clean[int(len(normalized_df_clean) * .7):].reset_index()
 
 # def df_to_ds(df, target):
 #   dataframe = df.copy()
@@ -95,22 +96,24 @@ print(training_df.columns)
 training_df_x = training_df.drop(index=0, axis=1)
 training_df_y = training_df.pop('kWhDelivered')
 
-test_df_x = training_df.drop(index=0, axis=1)
-test_df_y = test_df.pop('kWhDelivered')
+# test_df_x = training_df.drop(index=0, axis=1)
+# test_df_y = test_df.pop('kWhDelivered')
 # val_ds = df_to_ds(val_df, 'kWhDelivered')
 # test_ds = df_to_ds(test_df, 'kWhDelivered')
 
 def train(x_train, y_train):
   model = keras.Sequential()
-  model.add(keras.layers.LSTM(10, activation='relu', input_shape=(3, 1)))
+  model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(2, 1)))
   model.add(keras.layers.RepeatVector(1))
-  model.add(keras.layers.LSTM(10, activation='relu', input_shape=(3, 1)))
-  model.add(keras.layers.RepeatVector(1))
-  model.add(keras.layers.LSTM(10, activation='relu', input_shape=(3, 1)))
-  model.add(keras.layers.RepeatVector(1))
+  # model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(2, 1)))
+  # model.add(keras.layers.RepeatVector(1))
+  # model.add(keras.layers.LSTM(500, activation='tanh', input_shape=(3, 1)))
+  # model.add(keras.layers.RepeatVector(1))
+  # model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(3, 1)))
+  # model.add(keras.layers.RepeatVector(1))
   model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
   model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
-  history = model.fit(x_train, y_train, epochs=750, validation_split=0.2, shuffle=False)
+  history = model.fit(x_train, y_train, epochs=5000, validation_split=0.2, shuffle=False)
 
   return model, history
 
@@ -179,13 +182,13 @@ def round_based_learning(rounds=3):
   # print(local_models)
   i = 1
   for model in local_model_layers:
-    yhat = model.predict(normalized_df_clean)
+    yhat = model.predict(test_df)
     yhat = np.array(yhat).transpose(2, 0, 1).reshape(len(yhat), -1)
 
     plt.xlabel('charging events')
     plt.ylabel('kWhDelivered')
     plt.title(f'Model {i}')
-    plt.plot(normalized_df_clean['kWhDelivered'], label='true')
+    plt.plot(test_df['kWhDelivered'], label='true')
     plt.plot(yhat, label='predicted')
     plt.legend()
     plt.savefig(f'figures\\model_{i}.png')
@@ -193,7 +196,7 @@ def round_based_learning(rounds=3):
     i += 1
 
 
-# round_based_learning()
+round_based_learning(10)
 
 
 # IMPLEMENT THISSSSSSSSSS
