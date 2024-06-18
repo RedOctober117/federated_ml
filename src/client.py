@@ -103,7 +103,7 @@ training_df_y = training_df.pop('kWhDelivered')
 
 def train(x_train, y_train):
   model = keras.Sequential()
-  model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(2, 1)))
+  model.add(keras.layers.LSTM(50, activation='tanh', input_shape=(2, 1)))
   model.add(keras.layers.RepeatVector(1))
   # model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(2, 1)))
   # model.add(keras.layers.RepeatVector(1))
@@ -113,7 +113,7 @@ def train(x_train, y_train):
   # model.add(keras.layers.RepeatVector(1))
   model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
   model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
-  history = model.fit(x_train, y_train, epochs=5000, validation_split=0.2, shuffle=False)
+  history = model.fit(x_train, y_train, epochs=3000, validation_split=0.2, shuffle=False)
 
   return model, history
 
@@ -128,6 +128,7 @@ def evaluate(model, data):
   plt.ylabel('kWhDelivered')
   plt.plot(normalized_df_clean['kWhDelivered'], label='true')
   plt.plot(yhat, label='predicted')
+  plt.xticks(np.arange(min(normalized_df_clean['kWhDelivered'][0]), max(normalized_df_clean['kWhDelivered'][0])+1, 2.0))
   plt.legend()
   plt.show()
 
@@ -191,12 +192,12 @@ def round_based_learning(rounds=3):
     plt.plot(test_df['kWhDelivered'], label='true')
     plt.plot(yhat, label='predicted')
     plt.legend()
-    plt.savefig(f'figures\\model_{i}.png')
+    plt.savefig(f'figures/model_{i}.png')
     plt.clf()
     i += 1
 
 
-round_based_learning(10)
+round_based_learning(2)
 
 
 # IMPLEMENT THISSSSSSSSSS
