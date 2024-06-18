@@ -32,7 +32,7 @@ strategy = fl.server.strategy.FedAvg(
     # min_fit_clients=5,
 )
 
-fl.server.start_server(
+history = fl.server.start_server(
     server_address="0.0.0.0:8080",
     config=fl.server.ServerConfig(num_rounds=75),
     strategy=strategy,
