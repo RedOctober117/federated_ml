@@ -1,8 +1,3 @@
-from cProfile import label
-from calendar import EPOCH
-from datetime import date
-import datetime
-import math
 from matplotlib.pylab import normal
 import tensorflow as tf
 import flwr as fl
@@ -11,36 +6,39 @@ import keras
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-# from keras.utils import FeatureSpace
-import sys
+from sklearn.preprocessing import MinMaxScaler
 from flwr.common.logger import log
 from logging import INFO, DEBUG, log
 from matplotlib.backends.backend_pdf import PdfPages
-import time
-import json
+
 
 
 # Source: https://stackoverflow.com/questions/49505872/read-json-to-pandas-dataframe-valueerror-mixing-dicts-with-non-series-may-lea
-data = json.load(open('JPL_modified.json'))
-data_df = pd.DataFrame(data['_items'])
-retained_columns = ['connectionTime', 'disconnectTime', 'kWhDelivered', 'stationID']
-sliced_data_df = data_df.loc[:, retained_columns]
+data = pd.read_csv('all_sample.csv')
+retained_columns = ['datetime', 'I5-N VDS 759576']
+data_df = data.loc[:, retained_columns]
 
-normalized_df = sliced_data_df.copy(deep=True)
-normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].mean()) / normalized_df['kWhDelivered'].std()
+normalized_df = pd.DataFrame()
+scalar = MinMaxScaler()
+normalized_df['datetime'] = pd.to_datetime(data_df['datetime'], format='%m/%d/%Y %H:%M')
+normalized_df['I5-N VDS 759576'] = scalar.fit_transform(data_df['I5-N VDS 759576'].to_numpy().reshape(-1, 1))
+print(normalized_df)
+# normalized_df['I5-N VDS 759576'] = scalar.transform(normalized_df['I5-N VDS 759576'].to_numpy())
+
+# normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].mean()) / normalized_df['kWhDelivered'].std()
 # normalized_df['kWhDelivered'] = 1 / (1 + math.e**(-1 * normalized_df['kWhDelivered']))
 # normalized_df['kWhDelivered'] = (normalized_df['kWhDelivered'] - normalized_df['kWhDelivered'].min()) / (normalized_df['kWhDelivered'].max() - normalized_df['kWhDelivered'].min()) 
 
-normalized_df['connectionTime'] = pd.to_datetime(normalized_df['connectionTime'], format='%a, %d %b %Y %H:%M:%S %Z', utc=True)
-normalized_df['disconnectTime'] = pd.to_datetime(normalized_df['disconnectTime'], format='%a, %d %b %Y %H:%M:%S %Z', utc=True)
+# normalized_df['connectionTime'] = pd.to_datetime(normalized_df['connectionTime'], format='%a, %d %b %Y %H:%M:%S %Z', utc=True)
+# normalized_df['disconnectTime'] = pd.to_datetime(normalized_df['disconnectTime'], format='%a, %d %b %Y %H:%M:%S %Z', utc=True)
 
-normalized_df['chargeTime'] = (normalized_df['disconnectTime'] - normalized_df['connectionTime'])
+# normalized_df['chargeTime'] = (normalized_df['disconnectTime'] - normalized_df['connectionTime'])
 # normalized_df['chargeTime'] = normalized_df['chargeTime'].seconds
 
-for line in range(len(normalized_df['chargeTime'])):
-  normalized_df.at[line, 'chargeTime'] = normalized_df.at[line, 'chargeTime'].seconds
+# for line in range(len(normalized_df['chargeTime'])):
+#   normalized_df.at[line, 'chargeTime'] = normalized_df.at[line, 'chargeTime'].seconds
 
-normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].mean()) / normalized_df['chargeTime'].std()
+# normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].mean()) / normalized_df['chargeTime'].std()
 # normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].min()) / (normalized_df['chargeTime'].max() - normalized_df['chargeTime'].min()) 
 
 
@@ -50,37 +48,33 @@ normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['char
 # normalized_df['chargeTime'] = (normalized_df['chargeTime'] - normalized_df['chargeTime'].mean()) / normalized_df['chargeTime'].std()
 # normalized_df['chargeTime'] = 1 / (1 + math.e**(-1 * normalized_df['chargeTime']))
 
-for line in range(len(normalized_df['stationID'])):
+# for line in range(len(normalized_df['stationID'])):
   # normalized_df.at[line, 'connectionTime'] = datetime.datetime.strptime(normalized_df.at[line, 'connectionTime'], '%a, %d %b %Y %H:%M:%S %Z').date()
-  id = normalized_df.at[line, 'stationID'].split('-')
-  normalized_df.at[line, 'stationID'] = int(f'{id[2]}{id[3]}')
+#   id = normalized_df.at[line, 'stationID'].split('-')
+#   normalized_df.at[line, 'stationID'] = int(f'{id[2]}{id[3]}')
 
-normalized_df.sort_values(by=['stationID', 'connectionTime'], inplace=True)
+# normalized_df.sort_values(by=['stationID', 'connectionTime'], inplace=True)
 
-normalized_df.reset_index(drop=True, inplace=True)
+# normalized_df.reset_index(drop=True, inplace=True)
 
 
-print('\nDF:\n')
-print(normalized_df)
-print('\nDF min:\n')
-print(normalized_df.min())
-print('\nDF max:\n')
-print(normalized_df.max())
+print('\nDF mean:')
+print(normalized_df.mean())
 # print(normalized_df.hist())
 
-plt.xlabel('connectionTime')
-plt.ylabel('chargeTime')
-plt.plot(normalized_df['connectionTime'][0:100], normalized_df['chargeTime'][0:100], label='charge time')
-plt.plot(normalized_df['connectionTime'][0:100], normalized_df['kWhDelivered'][0:100], label='kwh delivered')
+plt.xlabel('observation')
+plt.ylabel('traffic count')
+plt.plot(normalized_df['I5-N VDS 759576'], label='traffic')
+# plt.plot(normalized_df['connectionTime'][0:100], normalized_df['kWhDelivered'][0:100], label='kwh delivered')
 plt.legend()
-plt.show()
+# plt.show()
 
-normalized_df = normalized_df.drop(normalized_df.query(str(f'stationID != 178817')).index)
-normalized_df_clean = normalized_df.drop(['connectionTime', 'disconnectTime', 'stationID'], axis=1)
+# normalized_df = normalized_df.drop(normalized_df.query(str(f'stationID != 178817')).index)
+# normalized_df_clean = normalized_df.drop(['connectionTime', 'disconnectTime', 'stationID'], axis=1)
 
-# training_df = normalized_df_clean.copy(deep=True)
-training_df = normalized_df_clean[:int(len(normalized_df_clean) * .7)]
-test_df = normalized_df_clean[int(len(normalized_df_clean) * .7):].reset_index()
+# training_df = normalized_df.copy()
+training_df = normalized_df[:int(len(normalized_df) * .7)]
+test_df = normalized_df[int(len(normalized_df) * .7):]
 
 # def df_to_ds(df, target):
 #   dataframe = df.copy()
@@ -90,11 +84,29 @@ test_df = normalized_df_clean[int(len(normalized_df_clean) * .7):].reset_index()
 #   # ds = ds.shuffle(buffer_size=len(dataframe))
 #   return ds
 
-print(training_df.columns)
+# print(training_df.columns)
 
+def split_sequence(sequence, n_steps):
+ X, y = list(), list()
+ for i in range(len(sequence)):
+ # find the end of this pattern
+  end_ix = i + n_steps
+ # check if we are beyond the sequence
+  if end_ix > len(sequence)-1:
+    break
+ # gather input and output parts of the pattern
+  seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
+  X.append(seq_x)
+  y.append(seq_y)
+ return np.array(X), np.array(y)
+
+steps = 1
 # training_ds = df_to_ds(training_df, 'kWhDelivered')
-training_df_x = training_df.drop(index=0, axis=1)
-training_df_y = training_df.pop('kWhDelivered')
+# training_df_x = training_df.drop(index=0, axis=1)
+training_df = training_df.pop('I5-N VDS 759576')
+test_df = test_df.pop('I5-N VDS 759576')
+training_x, training_y = split_sequence(training_df, steps)
+
 
 # test_df_x = training_df.drop(index=0, axis=1)
 # test_df_y = test_df.pop('kWhDelivered')
@@ -103,34 +115,34 @@ training_df_y = training_df.pop('kWhDelivered')
 
 def train(x_train, y_train):
   model = keras.Sequential()
-  model.add(keras.layers.LSTM(50, activation='tanh', input_shape=(2, 1)))
-  model.add(keras.layers.RepeatVector(1))
+  model.add(keras.layers.LSTM(10, activation='relu', input_shape=(steps, 1)))
+  # model.add(keras.layers.RepeatVector(1))
   # model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(2, 1)))
   # model.add(keras.layers.RepeatVector(1))
   # model.add(keras.layers.LSTM(500, activation='tanh', input_shape=(3, 1)))
   # model.add(keras.layers.RepeatVector(1))
   # model.add(keras.layers.LSTM(100, activation='tanh', input_shape=(3, 1)))
   # model.add(keras.layers.RepeatVector(1))
-  model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
+  model.add(keras.layers.Dense(1, activation='linear'))
   model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
-  history = model.fit(x_train, y_train, epochs=3000, validation_split=0.2, shuffle=False)
+  history = model.fit(x_train, y_train, epochs=100, shuffle=False)
 
   return model, history
 
 # model, history = train(training_df_x, training_df_y)
 
-def evaluate(model, data):
-  local_model, history = model
-  yhat = local_model.predict(data)
-  yhat = np.array(yhat).transpose(2, 0, 1).reshape(len(yhat), -1)
+# def evaluate(model, data):
+#   local_model, history = model
+#   yhat = local_model.predict(data)
+#   yhat = np.array(yhat).transpose(2, 0, 1).reshape(len(yhat), -1)
 
-  plt.xlabel('event index')
-  plt.ylabel('kWhDelivered')
-  plt.plot(normalized_df_clean['kWhDelivered'], label='true')
-  plt.plot(yhat, label='predicted')
-  plt.xticks(np.arange(min(normalized_df_clean['kWhDelivered'][0]), max(normalized_df_clean['kWhDelivered'][0])+1, 2.0))
-  plt.legend()
-  plt.show()
+#   plt.xlabel('event index')
+#   plt.ylabel('traffic flow')
+#   plt.plot(normalized_df[:int(len(normalized_df) * .7)], label='true')
+#   plt.plot(yhat, label='predicted')
+#   # plt.xticks(np.arange(min(normalized_df_clean['kWhDelivered'][0]), max(normalized_df_clean['kWhDelivered'][0])+1, 2.0))
+#   plt.legend()
+#   plt.show()
 
 # epochs = history.epoch
 # hist = pd.DataFrame(history.history)
@@ -176,7 +188,7 @@ def round_based_learning(rounds=3):
   # local_models = [] 
   local_model_layers = []
   for round in range(rounds):
-    model, history = train(training_df_x, training_df_y)
+    model, history = train(training_x, training_y)
     local_model_layers.append(model)
     # local_models.append((model, history))
 
@@ -184,17 +196,18 @@ def round_based_learning(rounds=3):
   i = 1
   for model in local_model_layers:
     yhat = model.predict(test_df)
-    yhat = np.array(yhat).transpose(2, 0, 1).reshape(len(yhat), -1)
+    # yhat = np.array(yhat).transpose(2, 0, 1).reshape(len(yhat), -1)
 
-    plt.xlabel('charging events')
-    plt.ylabel('kWhDelivered')
+    plt.xlabel('events')
+    plt.ylabel('traffic')
     plt.title(f'Model {i}')
-    plt.plot(test_df['kWhDelivered'], label='true')
-    plt.plot(yhat, label='predicted')
+    plt.plot(test_df, label='true')
+    plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
     plt.legend()
     plt.savefig(f'figures/model_{i}.png')
     plt.clf()
     i += 1
+
 
 
 round_based_learning(2)

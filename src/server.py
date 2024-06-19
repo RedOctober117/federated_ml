@@ -28,11 +28,7 @@ strategy = fl.server.strategy.FedAvg(
     on_fit_config_fn=get_on_fit_config_fn(),
 )
 
-<<<<<<< HEAD
-=======
-fed_trimmed_avg = fl.server.strategy.FedAvgM()
 
->>>>>>> f4a6b1c1ed279ff1e4a1893b08c54d4f64153773
 history = fl.server.start_server(
     server_address="0.0.0.0:8080",
     config=fl.server.ServerConfig(num_rounds=50),
