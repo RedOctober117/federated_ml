@@ -1,4 +1,10 @@
+from audioop import avg
+import math
+import time
 from matplotlib.pylab import normal
+import sklearn
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, median_absolute_error
+import sklearn.metrics
 import tensorflow as tf
 from flwr.server.strategy import FedAvg
 import keras
@@ -9,27 +15,14 @@ from sklearn.preprocessing import MinMaxScaler
 from flwr.common.logger import log
 from logging import INFO, DEBUG, log
 from matplotlib.backends.backend_pdf import PdfPages
+from pathlib import Path
 
-def plot_the_loss_curve(epochs, mse_training, mse_validation):
-  """Plot a curve of loss vs. epoch."""
+time_ = int(time.time())
 
-  plt.figure()
-  plt.xlabel("Epoch")
-  plt.ylabel("Mean Squared Error")
+Path.mkdir(Path(Path.cwd(), 'figures', f'{time_}'))
+path = Path(Path.cwd(), 'figures', f'{time_}')
 
-  plt.plot(epochs, mse_training, label="Training Loss")
-  plt.plot(epochs, mse_validation, label="Validation Loss")
 
-  # mse_training is a pandas Series, so convert it to a list first.
-  merged_mse_lists = mse_training.tolist() + mse_validation
-  highest_loss = max(merged_mse_lists)
-  lowest_loss = min(merged_mse_lists)
-  top_of_y_axis = highest_loss * 1.03
-  bottom_of_y_axis = lowest_loss * 0.97
-
-  plt.ylim([bottom_of_y_axis, top_of_y_axis])
-  plt.legend()
-  plt.show()
 
 data = pd.read_csv('all_sample.csv')
 retained_columns = ['datetime', 'I5-N VDS 759576', 'I5-N VDS 763237', 'I5-N VDS 759602', 'I5-N VDS 716974', 'I5-S VDS 71693']
@@ -49,16 +42,13 @@ print(normalized_df)
 
 print('\nDF mean:')
 print(normalized_df.mean())
-# print(normalized_df.hist())
-
 plt.xlabel('observation')
 plt.ylabel('traffic count')
 plt.plot(normalized_df['I5-N VDS 759576'], label='traffic')
-# plt.plot(normalized_df['I5-N VDS 763237'], label='traffic')
-# plt.plot(normalized_df['I5-N VDS 759602'], label='traffic')
-# plt.plot(normalized_df['I5-N VDS 716974'], label='traffic')
+
 plt.legend()
-plt.show()
+# plt.show()
+
 
 
 training_df = normalized_df[:int(len(normalized_df) * .7)]
@@ -92,9 +82,9 @@ global_test = test_df.pop('I5-S VDS 71693')
 
 def train(x_train, y_train, epochs=100):
   model = keras.Sequential()
-  model.add(keras.layers.LSTM(10, activation='relu', input_shape=(steps, 1)))
+  model.add(keras.layers.LSTM(50, activation='relu', input_shape=(steps, 1)))
   model.add(keras.layers.Dense(1, activation='linear'))
-  model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
+  model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
   history = model.fit(x_train, y_train, epochs=epochs, shuffle=False)
 
   return model, history
@@ -122,10 +112,10 @@ def round_based_learning(training_x, training_y, rounds=3):
 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model: keras.models.Sequential = keras.Sequential()
-  global_model.add(keras.layers.Dense(1, activation='linear'))
   client_model_history = []
   client_models = []
   print(len(clients[0]))
+  # PSEUCODE and visualize
   for round in range(rounds):
     print(f'\n\t### BEGINNING ROUND {round} ###\n')
     for client in clients:
@@ -136,60 +126,63 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
     if global_model is None:
       global_model = client_models[0]
     else:
-        for layer_index in range(len(global_model.layers)):
-            global_weights = global_model.layers[layer_index].get_weights()
-            local_weights_list = [local_model.layers[layer_index].get_weights() for local_model in client_models]
+      avg_weights = []
+      for layer in range(len(client_models[0].layers)):
+        avg_weights.append(np.mean([ model.get_weights()[layer] for model in client_models ], axis=0))
 
-            new_global_weights = []
-            for weight_idx in range(len(global_weights)):
-                local_weights_component = [local_weights[weight_idx] for local_weights in local_weights_list]
+      for global_layer_index in range(len(global_model.layers)):
+        global_model.layers[global_layer_index].set_weights(avg_weights[global_layer_index])
 
-                averaged_weights_component = np.mean(local_weights_component, axis=0)
-                new_global_weights.append(averaged_weights_component)
 
-            global_model.layers[layer_index].set_weights(new_global_weights)
 
   i = 1
   for model, client, history in zip(client_models, clients, client_model_history):
     yhat = model.predict(client[2])
     plt.xlabel('events')
     plt.ylabel('traffic')
-    plt.title(f'Model {i}, Round {round}')
+    plt.title(f'Model {i}')
     plt.plot(client[2], label='true')
     plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
     plt.legend()
-    plt.savefig(f'figures/model_{i}_{round}.png')
+    plt.savefig(f'{path}/model_{i}')
     plt.clf()
-
-    # epochs = history.epoch
-    # hist = pd.DataFrame(history.history)
-    # mse = hist['mean_squared_error']
-
-    # plot_the_loss_curve(epochs, mse, history.history['mean_squared_error'])
-
-    # plt.xlabel('epochs')
-    # plt.ylabel('MSE')
-    # plt.title(f'Model {i}, Round {round} MSE')
-    # plt.plot(epochs, mse, label='Training Loss')
-    # # plt.plot(epochs, history.history["val_mean_squared_error"], label='Validation Loss')
-    # plt.legend()
-    # plt.savefig(f'figures/model_loss_{i}_{round}.png')
-    # plt.clf()
     i += 1
 
   return global_model
 
-model: keras.models.Sequential = federated_learning(clients, test_df, epochs=200)
+round_count = 2
+epoch_count = 200
+model_layout = 'LSTM: 50 relu mean_absolute_error, \n Dense: 1 linear mean_absolute_error'
 
-# model.add(keras.layers.Dense(1, activation='linear'))
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
+model: keras.models.Sequential = federated_learning(clients, test_df, epochs=epoch_count, rounds=round_count)
+model.add(keras.layers.Dense(1, activation='linear'))
+
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 yhat = model.predict(global_test)
-# yhat = model.predict(clients[0][2])
+
 plt.xlabel('events')
 plt.ylabel('traffic')
-plt.title(f'Global Model')
+plt.title(f'Global Model: R: {round_count} E: {epoch_count} M: {model_layout}')
 plt.plot(global_test, label='true')
 plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
 plt.legend()
-plt.savefig(f'figures/global_model.png')
+
+plt.savefig(f'{path.as_posix()}/global_model_{int(time_)}.png')
 plt.clf()
+
+logs = []
+
+logs.append(f'LSTM R2 score {sklearn.metrics.r2_score(global_test, yhat)}\n')
+logs.append(f'LSTM MSE score {mean_squared_error(global_test, yhat)}\n')
+logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(global_test, yhat)}\n')
+logs.append(f'LSTM MAE score {mean_absolute_error(global_test, yhat)}\n')
+logs.append(f'LSTM MDAE score {median_absolute_error(global_test, yhat)}\n')
+logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(global_test, yhat))}\n')
+
+with open(f'{path.as_posix()}/log.txt', 'w') as file:
+  file.write(f'TIMESTAMP: {time_}\n')
+  for log in logs:
+    file.write(log)
+
+
+
