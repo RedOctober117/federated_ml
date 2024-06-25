@@ -1,4 +1,3 @@
-from audioop import avg
 import math
 import time
 from matplotlib.pylab import normal
@@ -6,15 +5,12 @@ import sklearn
 from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, median_absolute_error
 import sklearn.metrics
 import tensorflow as tf
-from flwr.server.strategy import FedAvg
 import keras
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from flwr.common.logger import log
-from logging import INFO, DEBUG, log
-from matplotlib.backends.backend_pdf import PdfPages
 from pathlib import Path
 
 time_ = int(time.time())
@@ -80,9 +76,13 @@ clients = [
 
 global_test = test_df.pop('I5-S VDS 71693')
 
-def train(x_train, y_train, epochs=100):
+def train(x_train, y_train, weights, epochs=100):
   model = keras.Sequential()
-  model.add(keras.layers.LSTM(50, activation='relu', input_shape=(steps, 1)))
+  # for layer_index in range(len(model.layers)):
+  #     model.layers[layer_index].set_weights(weights[layer_index])
+  # if weights is not None:
+    # model.set_weights(weights)
+  model.add(keras.layers.LSTM(100, activation='relu', input_shape=(steps, 1), seed=1337))
   model.add(keras.layers.Dense(1, activation='linear'))
   model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
   history = model.fit(x_train, y_train, epochs=epochs, shuffle=False)
@@ -90,50 +90,52 @@ def train(x_train, y_train, epochs=100):
   return model, history
 
 
-def round_based_learning(training_x, training_y, rounds=3):
-  local_model_layers = []
-  for round in range(rounds):
-    model, history = train(training_x, training_y)
-    local_model_layers.append(model)
+# def round_based_learning(training_x, training_y, rounds=3):
+#   local_model_layers = []
+#   for round in range(rounds):
+#     model, history = train(training_x, training_y)
+#     local_model_layers.append(model)
 
-  i = 1
-  for model in local_model_layers:
-    yhat = model.predict(test_df)
+#   i = 1
+#   for model in local_model_layers:
+#     yhat = model.predict(test_df)
 
-    plt.xlabel('events')
-    plt.ylabel('traffic')
-    plt.title(f'Model {i}')
-    plt.plot(test_df, label='true')
-    plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
-    plt.legend()
-    plt.savefig(f'figures/model_{i}.png')
-    plt.clf()
-    i += 1
+#     plt.xlabel('events')
+#     plt.ylabel('traffic')
+#     plt.title(f'Model {i}')
+#     plt.plot(test_df, label='true')
+#     plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
+#     plt.legend()
+#     plt.savefig(f'figures/model_{i}.png')
+#     plt.clf()
+#     i += 1
 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model: keras.models.Sequential = keras.Sequential()
   client_model_history = []
   client_models = []
-  print(len(clients[0]))
+  prev_weights = None
   # PSEUCODE and visualize
   for round in range(rounds):
     print(f'\n\t### BEGINNING ROUND {round} ###\n')
     for client in clients:
-      current_model, current_history = train(client[0], client[1], epochs)
+      current_model, current_history = train(client[0], client[1], prev_weights, epochs=epochs)
       client_model_history.append(current_history)
       client_models.append(current_model)
 
     if global_model is None:
       global_model = client_models[0]
     else:
-      avg_weights = []
-      for layer in range(len(client_models[0].layers)):
-        avg_weights.append(np.mean([ model.get_weights()[layer] for model in client_models ], axis=0))
+      local_weights = []
+      for layer in range(len(global_model.layers)):
+        local_weights = [ model.get_weights()[layer] for model in client_models ]
 
-      for global_layer_index in range(len(global_model.layers)):
-        global_model.layers[global_layer_index].set_weights(avg_weights[global_layer_index])
+        avg_weights = np.mean(local_weights, axis=0)
 
-
+        # for global_layer_index in range(len(global_model.layers)):
+        global_model.layers[layer].set_weights(avg_weights)
+      
+      # prev_weights = [ np.array(weight) for weight in avg_weights ]
 
   i = 1
   for model, client, history in zip(client_models, clients, client_model_history):
@@ -142,31 +144,32 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
     plt.ylabel('traffic')
     plt.title(f'Model {i}')
     plt.plot(client[2], label='true')
-    plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
+    plt.plot(pd.DataFrame(yhat, index=client[2].index), label='predicted')
     plt.legend()
     plt.savefig(f'{path}/model_{i}')
     plt.clf()
+    print(model.layers)
+    print(len(model.layers))
     i += 1
 
   return global_model
 
-round_count = 2
-epoch_count = 200
-model_layout = 'LSTM: 50 relu mean_absolute_error, \n Dense: 1 linear mean_absolute_error'
+round_count = 3
+epoch_count = 100
+model_layout = 'LSTM: 100 relu mean_absolute_error, \n Dense: 1 linear mean_absolute_error'
 
 model: keras.models.Sequential = federated_learning(clients, test_df, epochs=epoch_count, rounds=round_count)
 model.add(keras.layers.Dense(1, activation='linear'))
 
-model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
 yhat = model.predict(global_test)
 
 plt.xlabel('events')
 plt.ylabel('traffic')
 plt.title(f'Global Model: R: {round_count} E: {epoch_count} M: {model_layout}')
 plt.plot(global_test, label='true')
-plt.plot(pd.DataFrame(yhat, index=test_df.index), label='predicted')
+plt.plot(pd.DataFrame(yhat, index=global_test.index), label='predicted')
 plt.legend()
-
 plt.savefig(f'{path.as_posix()}/global_model_{int(time_)}.png')
 plt.clf()
 
@@ -184,5 +187,7 @@ with open(f'{path.as_posix()}/log.txt', 'w') as file:
   for log in logs:
     file.write(log)
 
+print(model.layers)
+print(len(model.layers))
 
-
+print(model.get_weights())
