@@ -1,0 +1,12 @@
+TIMESTAMP: 1719438494
+Global Model: Rounds: 3 Epochs: 200  Steps: 1
+ Model description: 
+Local Models: LSTM 256 activation='tanh', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='tanh', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, activation='linear', 
+Global Model: LSTM 256 activation='tanh', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='tanh', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, activation='linear', 
+
+LSTM R2 score -1.1870568687751217
+LSTM MSE score 0.21914028601126367
+LSTM MAPE score 1292226414885.539
+LSTM MAE score 0.4308041464575708
+LSTM MDAE score 0.513047323983825
+LSTM RMSE score 0.46812422070564097

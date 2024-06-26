@@ -1,0 +1,12 @@
+TIMESTAMP: 1719442833
+Global Model: Rounds: 3 Epochs: 200  Steps: 1
+ Model description: 
+Local Models: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_initializer='lecun_uniform'; Dense 1, activation='linear', 
+Global Model: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_initializer='lecun_uniform'; Dense 1, activation='linear', 
+
+LSTM R2 score 0.019182278976515588
+LSTM MSE score 0.39310669782515373
+LSTM MAPE score 0.8769699403345085
+LSTM MAE score 0.5868814839787129
+LSTM MDAE score 0.6113370548121042
+LSTM RMSE score 0.6269822149193338

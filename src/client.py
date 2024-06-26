@@ -26,7 +26,7 @@ retained_columns = ['datetime', 'I5-N VDS 759576', 'I5-N VDS 763237', 'I5-N VDS 
 data_df = data.loc[:, retained_columns]
 
 normalized_df = pd.DataFrame()
-scalar = MinMaxScaler(feature_range=(0,1))
+scalar = MinMaxScaler(feature_range=(-1,1))
 normalized_df['datetime'] = pd.to_datetime(data_df['datetime'], format='%m/%d/%Y %H:%M')
 normalized_df['I5-N VDS 759576'] = scalar.fit_transform(data_df['I5-N VDS 759576'].to_numpy().reshape(-1, 1))
 normalized_df['I5-N VDS 763237'] = scalar.fit_transform(data_df['I5-N VDS 763237'].to_numpy().reshape(-1, 1))
@@ -88,11 +88,11 @@ def train(x_train, y_train, weights, epochs=100):
     for layer_index in range(len(model.layers)):
         model.layers[layer_index].set_weights(weights[layer_index])
 
-  model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
-  model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-  model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+  # model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True))
+  model.add(keras.layers.LSTM(60, input_shape=(steps, 1), activation='relu', kernel_initializer='lecun_uniform', return_sequences=False))
+  model.add(keras.layers.Dense(1))
   model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
-  history = model.fit(x_train, y_train, epochs=epochs, shuffle=False, verbose='1')
+  history = model.fit(x_train, y_train, epochs=epochs, shuffle=False, validation_split=0.2, verbose='2')
 
   return model, history
 
@@ -104,9 +104,9 @@ def train(x_train, y_train, weights, epochs=100):
 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
-  global_model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
-  global_model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(1, kernel_constraint=keras.constraints.NonNeg()))
+  # global_model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True))
+  global_model.add(keras.layers.LSTM(60, input_shape=(steps, 1), activation='relu', kernel_initializer='lecun_uniform', return_sequences=False))
+  global_model.add(keras.layers.Dense(1))
   global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
   
   client_model_history = []
@@ -152,8 +152,8 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 round_count = 3
 epoch_count = 200
 model_layout = """
-Local Models: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, activation='linear', kernel_constraint=keras.constraints.NonNeg()
-Global Model: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, kernel_constraint=keras.constraints.NonNeg()
+Local Models: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_initializer='lecun_uniform'; Dense 1, activation='linear', 
+Global Model: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_initializer='lecun_uniform'; Dense 1, activation='linear', 
 """
 
 model: keras.models.Sequential = federated_learning(clients, test_df, epochs=epoch_count, rounds=round_count)

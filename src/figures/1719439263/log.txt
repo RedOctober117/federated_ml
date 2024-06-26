@@ -1,0 +1,12 @@
+TIMESTAMP: 1719439263
+Global Model: Rounds: 3 Epochs: 200  Steps: 1
+ Model description: 
+Local Models: LSTM 256 activation='sigmoid', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='sigmoid', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, activation='linear', 
+Global Model: LSTM 256 activation='sigmoid', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='sigmoid', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, activation='linear', 
+
+LSTM R2 score -6.286278518814666
+LSTM MSE score 0.7300757384809232
+LSTM MAPE score 54914095288919.38
+LSTM MAE score 0.8121679628221242
+LSTM MDAE score 0.7001851187528007
+LSTM RMSE score 0.8544446959756513
