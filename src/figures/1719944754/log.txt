@@ -1,0 +1,19 @@
+TIMESTAMP: 1719944754
+Global Model: Rounds: 3 Epochs: 150  Steps: 1
+Model description: 
+Local Model:
+model.add(keras.layers.LSTM(50, input_shape=(steps, 1), activation='relu'))
+model.add(keras.layers.Dense(1, activation='linear'))
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
+
+Global Model:
+global_model.add(keras.layers.LSTM(50, input_shape=(steps, 1), activation='relu'))
+global_model.add(keras.layers.Dense(1, activation='linear'))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+LSTM R2 score -2.4555352903524987
+LSTM MSE score 0.34624019277283985
+LSTM MAPE score 1632292044801.0066
+LSTM MAE score 0.5277308930502475
+LSTM MDAE score 0.6386006040989526
+LSTM RMSE score 0.5884217813548712

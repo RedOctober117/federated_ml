@@ -37,7 +37,7 @@ print(normalized_df)
 
 print('\nDF mean:')
 print(normalized_df.mean())
-plt.xlabel('observation')
+plt.xlabel('hour')
 plt.ylabel('traffic count')
 plt.plot(normalized_df['I5-N VDS 759576'], label='traffic')
 
@@ -78,21 +78,17 @@ global_test = test_df.pop('I5-S VDS 71693')
 
 
 
-
-
-
-
 def train(x_train, y_train, weights, epochs=100):
   model = keras.Sequential()
-  if weights is not None:
-    for layer_index in range(len(model.layers)):
-        model.layers[layer_index].set_weights(weights[layer_index])
+  # if weights is not None:
+  #   for layer_index in range(len(model.layers)):
+  #       model.layers[layer_index].set_weights(weights[layer_index])
 
   # model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True))
-  model.add(keras.layers.LSTM(100, input_shape=(steps, 1), activation='leaky_relu', kernel_initializer='lecun_uniform', return_sequences=False))
-  model.add(keras.layers.Dense(1, activation='tanh'))
+  model.add(keras.layers.LSTM(10, input_shape=(steps, 1), activation='relu'))
+  model.add(keras.layers.Dense(1, activation='linear'))
   model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
-  history = model.fit(x_train, y_train, epochs=epochs, shuffle=False, validation_split=0.2, verbose='2')
+  history = model.fit(x_train, y_train, epochs=epochs, shuffle=False, verbose='2')
 
   return model, history
 
@@ -105,9 +101,9 @@ def train(x_train, y_train, weights, epochs=100):
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
   # global_model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True))
-  global_model.add(keras.layers.LSTM(100, input_shape=(steps, 1), activation='leaky_relu', kernel_initializer='lecun_uniform', return_sequences=False))
-  global_model.add(keras.layers.Dense(1, activation='tanh'))
-  global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+  global_model.add(keras.layers.LSTM(10, input_shape=(steps, 1), activation='relu'))
+  global_model.add(keras.layers.Dense(1, activation='linear'))
+  global_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
   
   client_model_history = []
   client_models = []
@@ -116,23 +112,27 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
   for round in range(rounds):
     print(f'\n\t### BEGINNING ROUND {round} ###\n')
     for client in clients:
+      print(f'\n\t### ROUND {round}: Training client. . . ###\n')
       current_model, current_history = train(client[0], client[1], prev_weights, epochs=epochs)
       client_model_history.append(current_history)
       client_models.append(current_model)
 
     for layer_index in range(len(global_model.layers)):
+      print(f'\n\t### ROUND {round}: Gathering weights for layer {layer_index}. . . ###\n')
       global_weights = global_model.layers[layer_index].get_weights()
       local_weights_list = [local_model.layers[layer_index].get_weights() for local_model in client_models]
 
       new_global_weights = []
       for weight_idx in range(len(global_weights)):
+        print(f'\n\t### ROUND {round}: Averaging weights for layer {weight_idx}. . . ###\n')
         local_weights_component = [local_weights[weight_idx] for local_weights in local_weights_list]
 
         averaged_weights_component = np.mean(local_weights_component, axis=0)
         new_global_weights.append(averaged_weights_component)
 
+      print(f'\n\t### ROUND {round}: Updating weights for global model layer {layer_index}. . . ###\n')
       global_model.layers[layer_index].set_weights(new_global_weights)
-      prev_weights = new_global_weights.copy()
+    # prev_weights = new_global_weights.copy()
 
   i = 1
   for model, client, history in zip(client_models, clients, client_model_history):
@@ -149,11 +149,18 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
   return global_model
 
-round_count = 3
+round_count = 4
 epoch_count = 200
 model_layout = """
-Local Models: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_initializer='lecun_uniform'; Dense 1, activation='linear', 
-Global Model: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_initializer='lecun_uniform'; Dense 1, activation='linear', 
+Local Model:
+model.add(keras.layers.LSTM(10, input_shape=(steps, 1), activation='relu'))
+model.add(keras.layers.Dense(1, activation='linear'))
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+Global Model:
+global_model.add(keras.layers.LSTM(10, input_shape=(steps, 1), activation='relu'))
+global_model.add(keras.layers.Dense(1, activation='linear'))
+global_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
 """
 
 model: keras.models.Sequential = federated_learning(clients, test_df, epochs=epoch_count, rounds=round_count)
@@ -173,7 +180,7 @@ plt.clf()
 
 logs = []
 
-logs.append(f'Global Model: Rounds: {round_count} Epochs: {epoch_count}  Steps: {steps}\n Model description: {model_layout}\n')
+logs.append(f'Global Model: Rounds: {round_count} Epochs: {epoch_count}  Steps: {steps}\nModel description: {model_layout}\n')
 logs.append(f'LSTM R2 score {sklearn.metrics.r2_score(global_test, yhat)}\n')
 logs.append(f'LSTM MSE score {mean_squared_error(global_test, yhat)}\n')
 logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(global_test, yhat)}\n')
