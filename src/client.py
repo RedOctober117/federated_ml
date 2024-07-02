@@ -74,6 +74,9 @@ clients = [
 
 global_test = test_df.pop('I5-S VDS 71693')
 
+# Gather a single sensor and split data into 4 equal sets for 4 clients. Test
+# global model on both the original total data set and then on each individual
+# client set.
 
 
 
@@ -84,15 +87,18 @@ def train(x_train, y_train, weights, epochs=100):
   #   for layer_index in range(len(model.layers)):
   #       model.layers[layer_index].set_weights(weights[layer_index])
 
-  # model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True))
-  model.add(keras.layers.LSTM(10, input_shape=(steps, 1), activation='relu'))
-  model.add(keras.layers.Dense(1, activation='linear'))
+  model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+  model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+  model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
   model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
   history = model.fit(x_train, y_train, epochs=epochs, shuffle=False, verbose='2')
 
   return model, history
 
-
+"""
+Local Models: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, activation='linear', kernel_constraint=keras.constraints.NonNeg()
+Global Model: LSTM 256 activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True; LSTM 64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg(); Dense 1, kernel_constraint=keras.constraints.NonNeg()
+"""
 
 
 
@@ -101,8 +107,9 @@ def train(x_train, y_train, weights, epochs=100):
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
   # global_model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_initializer='lecun_uniform', return_sequences=True))
-  global_model.add(keras.layers.LSTM(10, input_shape=(steps, 1), activation='relu'))
-  global_model.add(keras.layers.Dense(1, activation='linear'))
+  global_model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+  global_model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
   global_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras.metrics.MeanSquaredError()])
   
   client_model_history = []
@@ -149,7 +156,7 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
   return global_model
 
-round_count = 4
+round_count = 3
 epoch_count = 200
 model_layout = """
 Local Model:
@@ -165,15 +172,15 @@ global_model.compile(optimizer='adam', loss='mean_squared_error', metrics=[keras
 
 model: keras.models.Sequential = federated_learning(clients, test_df, epochs=epoch_count, rounds=round_count)
 
-yhat = model.predict(global_test)
+yhat = model.predict(clients[0][2])
 # yhat = scalar.inverse_transform(yhat)
 # global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
 
 plt.xlabel('events')
 plt.ylabel('traffic')
 plt.title(f'Global Model {time_}')
-plt.plot(global_test, label='true')
-plt.plot(pd.DataFrame(yhat, index=global_test.index), label='predicted')
+plt.plot(clients[0][2], label='true')
+plt.plot(pd.DataFrame(yhat, index=clients[0][2].index), label='predicted')
 plt.legend()
 plt.savefig(f'{path.as_posix()}/global_model_{int(time_)}.png')
 plt.clf()
