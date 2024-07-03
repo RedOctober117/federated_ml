@@ -164,7 +164,7 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
       print(f'\n\t### ROUND {round}: Updating weights for global model layer {layer_index}. . . ###\n')
       global_model.layers[layer_index].set_weights(new_global_weights)
-  # weights = new_global_weights
+  weights = new_global_weights
 
   i = 1
   for client in clients:
