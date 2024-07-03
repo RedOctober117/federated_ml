@@ -1,0 +1,81 @@
+TIMESTAMP: 1719958517
+
+	### CLIENT {i} ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+Model description: 
+Local Model:
+model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+Global Model:
+global_model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+LSTM R2 score -12.965844386891883
+LSTM MSE score 1.3992072221919898
+LSTM MAPE score 1.5861600671477445
+LSTM MAE score 1.0689163806942485
+LSTM MDAE score 1.314787231294757
+LSTM RMSE score 1.1828808994112594
+
+	### CLIENT {i} ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+Model description: 
+Local Model:
+model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+Global Model:
+global_model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+LSTM R2 score -12.689506867741256
+LSTM MSE score 1.4323486353604988
+LSTM MAPE score 1.5933049384855114
+LSTM MAE score 1.0790469437259422
+LSTM MDAE score 1.3436682105690345
+LSTM RMSE score 1.196807685202806
+
+	### CLIENT {i} ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+Model description: 
+Local Model:
+model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+Global Model:
+global_model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+LSTM R2 score -11.281828220920557
+LSTM MSE score 1.4175460464662166
+LSTM MAPE score 1.5861600719202742
+LSTM MAE score 1.059202246120481
+LSTM MDAE score 1.3634334899022624
+LSTM RMSE score 1.1906074275201783
+
+	### CLIENT {i} ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+Model description: 
+Local Model:
+model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+Global Model:
+global_model.add(keras.layers.Dense(1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
+
+LSTM R2 score -9.577917357192788
+LSTM MSE score 1.2782376695807105
+LSTM MAPE score 1.5861600763710126
+LSTM MAE score 0.9842320848683416
+LSTM MDAE score 1.2661056669517992
+LSTM RMSE score 1.1305917342616256
