@@ -22,7 +22,7 @@ path = Path(Path.cwd(), 'figures', f'{time_}')
 
 
 
-data = pd.read_csv('all_sample.csv')
+data = pd.read_csv('palo_alto_ev_data_full.csv')
 retained_columns = ['datetime', 'I5-N VDS 759576', 'I5-N VDS 763237', 'I5-N VDS 759602', 'I5-N VDS 716974', 'I5-S VDS 71693']
 data_df = data.loc[:, retained_columns]
 
