@@ -117,23 +117,6 @@ client_models = [ Client(client[0], client[1], client[2]) for client in clients 
 
 
 
-def train(x_train, y_train, weights, epochs=100):
-  model = keras.Sequential()
-  if weights is not None:
-    for layer_index in range(len(model.layers)):
-        model.layers[layer_index].set_weights(weights[layer_index])
-
-  model.add(keras.layers.LSTM(256, activation='relu', input_shape=(steps, 1), seed=1337, return_sequences=True))
-  model.add(keras.layers.LSTM(256, activation='relu', seed=1337, return_sequences=False))
-  # model.add(keras.layers.LSTM(64, activation='relu', seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-  model.add(keras.layers.Dense(1))
-  model.compile(optimizer='rmsprop', loss='mean_absolute_error', metrics=[keras.metrics.MeanAbsoluteError()])
-  history = model.fit(x_train, y_train, epochs=epochs, shuffle=False, verbose='2')
-
-  return model, history
-
-
-
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
   global_model.add(keras.layers.InputLayer((steps, 1)))
