@@ -22,58 +22,112 @@ path = Path(Path.cwd(), 'figures', f'{time_}')
 
 
 
-data = pd.read_csv('palo_alto_ev_data_full.csv')
-retained_columns = ['datetime', 'I5-N VDS 759576', 'I5-N VDS 763237', 'I5-N VDS 759602', 'I5-N VDS 716974', 'I5-S VDS 71693']
-data_df = data.loc[:, retained_columns]
+data = pd.read_csv('ChargePoint Data CY20Q4.csv')
+retained_columns = ['Station Name', 'Start Date', 'Energy (kWh)']
+data_df = data.loc[:10000, retained_columns]
 
-normalized_df = pd.DataFrame()
+
+data_df['Start Date'] = pd.to_datetime(data_df['Start Date'])
+data_df['Start Date'] = data_df['Start Date'].dt.floor('D')
+data_df.set_index('Start Date', inplace=True)
+data_df.resample('D').sum().sort_index(inplace=True)
+# data_df.sort_values(by=['Station Name', ], inplace=True)
+
+plt.ylabel('kWh')
+plt.plot(data_df['Energy (kWh)'], label='observed')
+plt.legend()
+plt.clf()
+# plt.show()
+print(data_df)
+
+stations = {}
+for key in data_df['Station Name']:
+  stations[key] = 1
+
+print(stations)
+client_1 = data_df[data_df['Station Name'] == 'PALO ALTO CA / HAMILTON #1']
+client_2 = data_df[data_df['Station Name'] == 'PALO ALTO CA / HAMILTON #2']
+# client_1 = data_df[data_df['Station Name' == 'PALO ALTO CA / HAMILTON #1']]
+# client_1 = data_df[data_df['Station Name' == 'PALO ALTO CA / HAMILTON #1']]
+
+# normalized_df = pd.DataFrame()
 scalar = MinMaxScaler(feature_range=(0,1))
-normalized_df['datetime'] = pd.to_datetime(data_df['datetime'], format='%m/%d/%Y %H:%M')
-normalized_df['I5-N VDS 759576'] = scalar.fit_transform(data_df['I5-N VDS 759576'].to_numpy().reshape(-1, 1))
-normalized_df['I5-N VDS 763237'] = scalar.fit_transform(data_df['I5-N VDS 763237'].to_numpy().reshape(-1, 1))
-normalized_df['I5-N VDS 759602'] = scalar.fit_transform(data_df['I5-N VDS 759602'].to_numpy().reshape(-1, 1))
-normalized_df['I5-N VDS 716974'] = scalar.fit_transform(data_df['I5-N VDS 716974'].to_numpy().reshape(-1, 1))
-normalized_df['I5-S VDS 71693'] = scalar.fit_transform(data_df['I5-S VDS 71693'].to_numpy().reshape(-1, 1))
-print(normalized_df)
+# scalar_2 = MinMaxScaler(feature_range=(0,1))
+# normalized_df['datetime'] = pd.to_datetime(data_df['datetime'], format='%m/%d/%Y %H:%M')
+client_1['Energy (kWh)'] = scalar.fit_transform(client_1['Energy (kWh)'].to_numpy().reshape(-1, 1))
+client_2['Energy (kWh)'] = scalar.fit_transform(client_2['Energy (kWh)'].to_numpy().reshape(-1, 1))
+# scalars = [scalar_1, scalar_2]
+# normalized_df['I5-N VDS 763237'] = scalar.fit_transform(data_df['I5-N VDS 763237'].to_numpy().reshape(-1, 1))
+# normalized_df['I5-N VDS 759602'] = scalar.fit_transform(data_df['I5-N VDS 759602'].to_numpy().reshape(-1, 1))
+# normalized_df['I5-N VDS 716974'] = scalar.fit_transform(data_df['I5-N VDS 716974'].to_numpy().reshape(-1, 1))
+# normalized_df['I5-S VDS 71693'] = scalar.fit_transform(data_df['I5-S VDS 71693'].to_numpy().reshape(-1, 1))
+# print(client_1)
+# print(client_2)
 
-print('\nDF mean:')
-print(normalized_df.mean())
+# print('\nDF mean:')
+# print(normalized_df.mean())
+
+client_1 = client_1.pop('Energy (kWh)')
+client_2 = client_2.pop('Energy (kWh)')
+
 plt.xlabel('hour')
-plt.ylabel('traffic count')
-plt.plot(normalized_df['I5-N VDS 759576'], label='traffic')
+plt.ylabel('Energy')
+plt.title('Client 1')
+plt.plot(client_1, label='traffic')
 
 plt.legend()
 # plt.show()
 
+plt.clf()
 
-training_df = normalized_df[:int(len(normalized_df) * .7)]
-test_df = normalized_df[int(len(normalized_df) * .7):]
+plt.xlabel('hour')
+plt.ylabel('Energy')
+plt.title('Client 2')
+plt.plot(client_2, label='traffic')
+
+
+plt.legend()
+# plt.show()
+plt.clf()
+
+
+# training_df = normalized_df[:int(len(normalized_df) * .7)]
+# test_df = normalized_df[int(len(normalized_df) * .7):]
 
 def split_sequence(sequence, n_steps):
- X, y = list(), list()
- for i in range(len(sequence)):
- # find the end of this pattern
-  end_ix = i + n_steps
- # check if we are beyond the sequence
-  if end_ix > len(sequence)-1:
-    break
- # gather input and output parts of the pattern
-  seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
-  X.append(seq_x)
-  y.append(seq_y)
- return np.array(X), np.array(y)
+  X, y = list(), list()
+  for i in range(len(sequence)):
+    # find the end of this pattern
+    end_ix = i + n_steps
+    # check if we are beyond the sequence
+    if end_ix > len(sequence)-1:
+      break
+    # gather input and output parts of the pattern
+    seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
+    X.append(seq_x)
+    y.append(seq_y)
+  return np.array(X), np.array(y)
 
 steps = 1
-test_df = test_df.drop(columns='datetime')
-
+# test_df = test_df.drop(columns='datetime')
+client_1_train = client_1[:int(len(client_1) * 0.7)] 
+client_2_train = client_2[:int(len(client_2) * 0.7)] 
+client_1_test = client_1[int(len(client_1) * 0.7):]
+client_2_test = client_2[int(len(client_2) * 0.7):]
+# print(client_1.iloc[:int(client_1_len * 0.7)]['Energy (kWh)'])
 clients = [
-  (*split_sequence(training_df['I5-N VDS 759576'], steps), test_df.pop('I5-N VDS 759576')),
-  (*split_sequence(training_df['I5-N VDS 763237'], steps), test_df.pop('I5-N VDS 763237')),
-  (*split_sequence(training_df['I5-N VDS 759602'], steps), test_df.pop('I5-N VDS 759602')),
-  (*split_sequence(training_df['I5-N VDS 716974'], steps), test_df.pop('I5-N VDS 716974')),
+  (*split_sequence(client_1_train, steps), client_1_test),
+  (*split_sequence(client_2_train, steps), client_2_test),
+  # (*split_sequence(client_2[:int(client_2_len * 0.7)], steps), client_2[int(client_2_len * 0.7):]),
+  # (*split_sequence(training_df['I5-N VDS 763237'], steps), test_df.pop('I5-N VDS 763237')),
+  # (*split_sequence(training_df['I5-N VDS 759602'], steps), test_df.pop('I5-N VDS 759602')),
+  # (*split_sequence(training_df['I5-N VDS 716974'], steps), test_df.pop('I5-N VDS 716974')),
 ]
-
-global_test = test_df.pop('I5-S VDS 71693')
+print(len(clients[0][2]))
+# print(clients[0][1])
+# print(clients[0][2])
+# exit()
+# global_test = test_df.pop('I5-S VDS 71693')
 
 # IDEA: Gather a single sensor and split data into 4 equal sets for 4 clients. 
 # Test global model on both the original total data set and then on each 
@@ -98,7 +152,7 @@ class Client():
       for layer_index in range(len(self.model.layers)):
         self.model.layers[layer_index].set_weights(weights[layer_index])
 
-    self.model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
+    self.model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
   
   def evaluate(self, label):
     yhat = self.model.predict(self.test_df)
@@ -165,7 +219,7 @@ model.add(keras.layers.InputLayer((steps, 1)))
 model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
 model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
 model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
-model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
 
 Global Model:
@@ -182,27 +236,27 @@ logs = []
 logs.append(f'Model description: {model_layout}')
 
 # global_test = client[2]
-yhat = model.predict(global_test)
-yhat = scalar.inverse_transform(yhat)
-global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
+# yhat = model.predict(global_test)
+# yhat = scalar.inverse_transform(yhat)
+# global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
 
-plt.xlabel('events')
-plt.ylabel('traffic')
-plt.title(f'Global Model Unobserved Prediction {time_}')
-plt.plot(global_test, label='true')
-plt.plot(yhat, label='predicted')
-plt.legend()
-plt.savefig(f'{path.as_posix()}/global_model_global_{int(time_)}.png')
-plt.clf()
+# plt.xlabel('events')
+# plt.ylabel('traffic')
+# plt.title(f'Global Model Unobserved Prediction {time_}')
+# plt.plot(global_test, label='true')
+# plt.plot(yhat, label='predicted')
+# plt.legend()
+# plt.savefig(f'{path.as_posix()}/global_model_global_{int(time_)}.png')
+# plt.clf()
 
-logs.append(f'\n\t### GLOBAL TEST ###\n')
-logs.append(f'Global Model: Rounds: {round_count} Epochs: {epoch_count}  Steps: {steps}\n')
-logs.append(f'LSTM R2 score {sklearn.metrics.r2_score(global_test, yhat)}\n')
-logs.append(f'LSTM MSE score {mean_squared_error(global_test, yhat)}\n')
-logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(global_test, yhat)}\n')
-logs.append(f'LSTM MAE score {mean_absolute_error(global_test, yhat)}\n')
-logs.append(f'LSTM MDAE score {median_absolute_error(global_test, yhat)}\n')
-logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(global_test, yhat))}\n')
+# logs.append(f'\n\t### GLOBAL TEST ###\n')
+# logs.append(f'Global Model: Rounds: {round_count} Epochs: {epoch_count}  Steps: {steps}\n')
+# logs.append(f'LSTM R2 score {sklearn.metrics.r2_score(global_test, yhat)}\n')
+# logs.append(f'LSTM MSE score {mean_squared_error(global_test, yhat)}\n')
+# logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(global_test, yhat)}\n')
+# logs.append(f'LSTM MAE score {mean_absolute_error(global_test, yhat)}\n')
+# logs.append(f'LSTM MDAE score {median_absolute_error(global_test, yhat)}\n')
+# logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(global_test, yhat))}\n')
 
 i = 1
 for client in clients:
@@ -212,7 +266,7 @@ for client in clients:
   global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
 
   plt.xlabel('events')
-  plt.ylabel('traffic')
+  plt.ylabel('Energy (kWh)')
   plt.title(f'Global Model Observed Prediction {time_}')
   plt.plot(global_test, label='true')
   plt.plot(yhat, label='predicted')
