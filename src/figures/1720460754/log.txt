@@ -1,0 +1,35 @@
+TIMESTAMP: 1720460754
+Model description: 
+Client Model:
+model = keras.Sequential()
+model.add(keras.layers.InputLayer((steps, 1)))
+model.add(keras.layers.LSTM(units=64, ))
+model.add(keras.layers.Dense(units=8, activation='relu', ))
+model.add(keras.layers.Dense(units=1, activation='linear', ))
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
+
+Global Model:
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(units=64, ))  # global_model.add(keras.layers.LSTM(1, seed=1337, ))
+global_model.add(keras.layers.Dense(units=8, activation='relu', ))
+global_model.add(keras.layers.Dense(units=1, activation='linear', ))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLIENT 1 ###
+Global Model: Rounds: 5 Epochs: 100  Steps: 2
+LSTM R2 score -0.1950147909624489
+LSTM MSE score 0.015322433815759767
+LSTM MAPE score 2.457555931752385
+LSTM MAE score 0.08424011482928785
+LSTM MDAE score 0.05546507377920112
+LSTM RMSE score 0.12378381887694274
+
+	### CLIENT 2 ###
+Global Model: Rounds: 5 Epochs: 100  Steps: 2
+LSTM R2 score -0.2948591598822907
+LSTM MSE score 0.01249850252469135
+LSTM MAPE score 644539886658.0457
+LSTM MAE score 0.08245844061287058
+LSTM MDAE score 0.05983830971203796
+LSTM RMSE score 0.11179670176123868
