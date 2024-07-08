@@ -1,0 +1,35 @@
+TIMESTAMP: 1720454822
+Model description: 
+Client Model:
+model = keras.Sequential()
+model.add(keras.layers.InputLayer((steps, 1)))
+model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
+
+Global Model:
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))  # global_model.add(keras.layers.LSTM(1, seed=1337, kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLIENT 1 ###
+Global Model: Rounds: 3 Epochs: 200  Steps: 1
+LSTM R2 score -0.12908067082826769
+LSTM MSE score 31.98348599756228
+LSTM MAPE score 2.0722592263690336
+LSTM MAE score 3.8924164761045175
+LSTM MDAE score 2.6343334908697424
+LSTM RMSE score 5.655394415738153
+
+	### CLIENT 2 ###
+Global Model: Rounds: 3 Epochs: 200  Steps: 1
+LSTM R2 score -0.20608738696975526
+LSTM MSE score 25.719384784607012
+LSTM MAPE score 2.4101511696100975
+LSTM MAE score 3.7660558033721356
+LSTM MDAE score 2.7196916360321053
+LSTM RMSE score 5.0714282785628555

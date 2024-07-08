@@ -49,13 +49,14 @@ client_1 = data_df[data_df['Station Name'] == 'PALO ALTO CA / HAMILTON #1']
 client_2 = data_df[data_df['Station Name'] == 'PALO ALTO CA / HAMILTON #2']
 # client_1 = data_df[data_df['Station Name' == 'PALO ALTO CA / HAMILTON #1']]
 # client_1 = data_df[data_df['Station Name' == 'PALO ALTO CA / HAMILTON #1']]
-
 # normalized_df = pd.DataFrame()
 scalar = MinMaxScaler(feature_range=(0,1))
 # scalar_2 = MinMaxScaler(feature_range=(0,1))
 # normalized_df['datetime'] = pd.to_datetime(data_df['datetime'], format='%m/%d/%Y %H:%M')
 client_1['Energy (kWh)'] = scalar.fit_transform(client_1['Energy (kWh)'].to_numpy().reshape(-1, 1))
 client_2['Energy (kWh)'] = scalar.fit_transform(client_2['Energy (kWh)'].to_numpy().reshape(-1, 1))
+print(client_1.head())
+print(client_2.head())
 # scalars = [scalar_1, scalar_2]
 # normalized_df['I5-N VDS 763237'] = scalar.fit_transform(data_df['I5-N VDS 763237'].to_numpy().reshape(-1, 1))
 # normalized_df['I5-N VDS 759602'] = scalar.fit_transform(data_df['I5-N VDS 759602'].to_numpy().reshape(-1, 1))
@@ -67,28 +68,28 @@ client_2['Energy (kWh)'] = scalar.fit_transform(client_2['Energy (kWh)'].to_nump
 # print('\nDF mean:')
 # print(normalized_df.mean())
 
-client_1 = client_1.pop('Energy (kWh)')
-client_2 = client_2.pop('Energy (kWh)')
+# client_1 = client_1.pop('Energy (kWh)')
+# client_2 = client_2.pop('Energy (kWh)')
 
 plt.xlabel('hour')
 plt.ylabel('Energy')
 plt.title('Client 1')
-plt.plot(client_1, label='traffic')
+plt.plot(client_1['Energy (kWh)'], label='client_1')
+plt.plot(client_2['Energy (kWh)'], label='client_2')
 
 plt.legend()
 # plt.show()
 
 plt.clf()
 
-plt.xlabel('hour')
-plt.ylabel('Energy')
-plt.title('Client 2')
-plt.plot(client_2, label='traffic')
+# plt.xlabel('hour')
+# plt.ylabel('Energy')
+# plt.title('Client 2')
 
 
-plt.legend()
+# plt.legend()
 # plt.show()
-plt.clf()
+# plt.clf()
 
 
 # training_df = normalized_df[:int(len(normalized_df) * .7)]
@@ -108,13 +109,17 @@ def split_sequence(sequence, n_steps):
     y.append(seq_y)
   return np.array(X), np.array(y)
 
-steps = 1
-# test_df = test_df.drop(columns='datetime')
-client_1_train = client_1[:int(len(client_1) * 0.7)] 
-client_2_train = client_2[:int(len(client_2) * 0.7)] 
-client_1_test = client_1[int(len(client_1) * 0.7):]
-client_2_test = client_2[int(len(client_2) * 0.7):]
-# print(client_1.iloc[:int(client_1_len * 0.7)]['Energy (kWh)'])
+steps = 2
+
+# client_1_train = client_1['Energy (kWh)'].iloc[:int(len(client_1['Energy (kWh)']) * 0.7)]
+# client_2_train = client_2['Energy (kWh)'].iloc[:int(len(client_2['Energy (kWh)']) * 0.7)]
+client_1_train = client_1[:int(len(client_1['Energy (kWh)']) * 0.7)]['Energy (kWh)']
+client_2_train = client_2[:int(len(client_2['Energy (kWh)']) * 0.7)]['Energy (kWh)']
+# client_1_test = client_1['Energy (kWh)'].iloc[int(len(client_1['Energy (kWh)']) * 0.7):]
+# client_2_test = client_2['Energy (kWh)'].iloc[int(len(client_2['Energy (kWh)']) * 0.7):]
+client_1_test = client_1[int(len(client_1['Energy (kWh)']) * 0.7):]['Energy (kWh)']
+client_2_test = client_2[int(len(client_2['Energy (kWh)']) * 0.7):]['Energy (kWh)']
+
 clients = [
   (*split_sequence(client_1_train, steps), client_1_test),
   (*split_sequence(client_2_train, steps), client_2_test),
@@ -123,7 +128,11 @@ clients = [
   # (*split_sequence(training_df['I5-N VDS 759602'], steps), test_df.pop('I5-N VDS 759602')),
   # (*split_sequence(training_df['I5-N VDS 716974'], steps), test_df.pop('I5-N VDS 716974')),
 ]
-print(len(clients[0][2]))
+
+print(clients[0][0], end='\n\n')
+print(clients[0][1], end='\n\n')
+print(clients[0][2], end='\n\n')
+# exit()
 # print(clients[0][1])
 # print(clients[0][2])
 # exit()
@@ -132,7 +141,6 @@ print(len(clients[0][2]))
 # IDEA: Gather a single sensor and split data into 4 equal sets for 4 clients. 
 # Test global model on both the original total data set and then on each 
 # individual client set.
-
 class Client():
   def __init__(self, x_train, y_train, test_df):
     self._x_train = x_train
@@ -141,10 +149,10 @@ class Client():
 
     self.model = keras.Sequential()
     self.model.add(keras.layers.InputLayer((steps, 1)))
-    self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
-    self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-    self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
-    self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+    self.model.add(keras.layers.LSTM(units=256, ))
+    self.model.add(keras.layers.Dense(units=64, activation='relu', ))
+    self.model.add(keras.layers.Dense(units=1, activation='linear', ))
+    self.model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
   def train(self, weights=None, epochs=100):
     print('Training. . .')
@@ -174,9 +182,9 @@ client_models = [ Client(client[0], client[1], client[2]) for client in clients 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
   global_model.add(keras.layers.InputLayer((steps, 1)))
-  global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))  # global_model.add(keras.layers.LSTM(1, seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.LSTM(units=64, ))  # global_model.add(keras.layers.LSTM(1, seed=1337, ))
+  global_model.add(keras.layers.Dense(units=8, activation='relu', ))
+  global_model.add(keras.layers.Dense(units=1, activation='linear', ))
   global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
   weights = None
@@ -211,22 +219,22 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
   return global_model
 
 round_count = 3
-epoch_count = 200
+epoch_count = 100
 model_layout = """
 Client Model:
 model = keras.Sequential()
 model.add(keras.layers.InputLayer((steps, 1)))
-model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
-model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.LSTM(units=64, ))
+model.add(keras.layers.Dense(units=8, activation='relu', ))
+model.add(keras.layers.Dense(units=1, activation='linear', ))
 model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
 
 Global Model:
 global_model.add(keras.layers.InputLayer((steps, 1)))
-global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))  # global_model.add(keras.layers.LSTM(1, seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.LSTM(units=64, ))  # global_model.add(keras.layers.LSTM(1, seed=1337, ))
+global_model.add(keras.layers.Dense(units=8, activation='relu', ))
+global_model.add(keras.layers.Dense(units=1, activation='linear', ))
 global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 """
 
@@ -262,8 +270,8 @@ i = 1
 for client in clients:
   global_test = client[2]
   yhat = model.predict(global_test)
-  yhat = scalar.inverse_transform(yhat)
-  global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
+  # yhat = scalar.inverse_transform(yhat)
+  # global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
 
   plt.xlabel('events')
   plt.ylabel('Energy (kWh)')
