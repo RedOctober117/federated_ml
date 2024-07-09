@@ -14,6 +14,7 @@ from matplotlib import pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from flwr.common.logger import log
 from pathlib import Path
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 time_ = int(time.time())
 
@@ -23,15 +24,16 @@ path = Path(Path.cwd(), 'figures', f'{time_}')
 
 
 data = pd.read_csv('ChargePoint Data CY20Q4.csv')
-retained_columns = ['Station Name', 'Start Date', 'Energy (kWh)']
-data_df = data.loc[:10000, retained_columns]
+retained_columns = ['Station Name', 'Start Date', 'Energy (kWh)', 'Address 1']
+data_df = data.loc[:, retained_columns]
 
 
 data_df['Start Date'] = pd.to_datetime(data_df['Start Date'])
 data_df['Start Date'] = data_df['Start Date'].dt.floor('D')
 data_df.set_index('Start Date', inplace=True)
-data_df.resample('D').sum().sort_index(inplace=True)
+# data_df.resample('D').sum().sort_index(inplace=True)
 # data_df.sort_values(by=['Station Name', ], inplace=True)
+print(data_df)
 
 plt.ylabel('kWh')
 plt.plot(data_df['Energy (kWh)'], label='observed')
@@ -42,42 +44,55 @@ print(data_df)
 
 stations = {}
 for key in data_df['Station Name']:
-  stations[key] = 1
+  if key in stations:
+    stations[key] += 1
+  else:
+    stations[key] = 1
 
-print(stations)
-client_1 = data_df[data_df['Station Name'] == 'PALO ALTO CA / HAMILTON #1']
-client_2 = data_df[data_df['Station Name'] == 'PALO ALTO CA / HAMILTON #2']
-data_df = pd.merge(client_1['Energy (kWh)'], client_2['Energy (kWh)'], how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
-data_df.fillna(0, inplace=True)
-print(data_df)
+for key, value in stations.items():
+  print(key, value)
+
+client_1 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #3'].pop('Energy (kWh)')
+client_2 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #4'].pop('Energy (kWh)')
+client_3 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #5'].pop('Energy (kWh)')
+client_4 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #6'].pop('Energy (kWh)')
+
+# client_1.drop('Station Name', inplace=True)
+# client_2.drop('Station Name', inplace=True)
+
+client_1 = client_1.resample('D', group_keys=True).sum()
+client_2 = client_2.resample('D', group_keys=True).sum()
+client_3 = client_3.resample('D', group_keys=True).sum()
+client_4 = client_4.resample('D', group_keys=True).sum()
+
+print(client_1)
+print(client_2)
+
+merged_data_df_1 = pd.merge(client_1, client_2, how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
+merged_data_df_2 = pd.merge(client_3, client_4, how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
+merged_data_df = pd.merge(merged_data_df_1, merged_data_df_2,  how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
+merged_data_df.fillna(0, inplace=True)
+print(merged_data_df)
 # exit()
-# client_1 = data_df[data_df['Station Name' == 'PALO ALTO CA / HAMILTON #1']]
-# client_1 = data_df[data_df['Station Name' == 'PALO ALTO CA / HAMILTON #1']]
 normalized_df = pd.DataFrame()
-normalized_df.index = data_df.index
+normalized_df.index = merged_data_df.index
 scalar = MinMaxScaler(feature_range=(0,1))
-normalized_df['Energy (kWh)_1'] = scalar.fit_transform(data_df['Energy (kWh)_1'].to_numpy().reshape(-1, 1))
-normalized_df['Energy (kWh)_2'] = scalar.fit_transform(data_df['Energy (kWh)_2'].to_numpy().reshape(-1, 1))
-# normalized_df['I5-N VDS 716974'] = scalar.fit_transform(data_df['I5-N VDS 716974'].to_numpy().reshape(-1, 1))
-# normalized_df['I5-S VDS 71693'] = scalar.fit_transform(data_df['I5-S VDS 71693'].to_numpy().reshape(-1, 1))
-# print(client_1)
-# print(client_2)
+normalized_df['Energy (kWh)_1_1'] = scalar.fit_transform(merged_data_df['Energy (kWh)_1_1'].to_numpy().reshape(-1, 1))
+normalized_df['Energy (kWh)_2_1'] = scalar.fit_transform(merged_data_df['Energy (kWh)_2_1'].to_numpy().reshape(-1, 1))
+normalized_df['Energy (kWh)_1_2'] = scalar.fit_transform(merged_data_df['Energy (kWh)_1_2'].to_numpy().reshape(-1, 1))
+normalized_df['Energy (kWh)_2_2'] = scalar.fit_transform(merged_data_df['Energy (kWh)_2_2'].to_numpy().reshape(-1, 1))
 
-# print('\nDF mean:')
-# print(normalized_df.mean())
-
-# client_1 = client_1.pop('Energy (kWh)')
-# client_2 = client_2.pop('Energy (kWh)')
-
+print(normalized_df['Energy (kWh)_1_1'])
 plt.xlabel('hour')
 plt.ylabel('Energy')
 plt.title('Client 1')
-plt.plot(normalized_df['Energy (kWh)_1'], label='client_1')
+plt.plot(normalized_df['Energy (kWh)_1_1'], label='client_1')
 
 plt.legend()
-# plt.show()
+plt.show()
 
 plt.clf()
+
 
 # plt.xlabel('hour')
 # plt.ylabel('Energy')
@@ -109,8 +124,10 @@ def split_sequence(sequence, n_steps):
 steps = 1
 
 clients = [
-  (*split_sequence(training_df['Energy (kWh)_1'], steps), test_df.pop('Energy (kWh)_1')),
-  (*split_sequence(training_df['Energy (kWh)_2'], steps), test_df.pop('Energy (kWh)_2')),
+  (*split_sequence(training_df['Energy (kWh)_1_1'], steps), test_df.pop('Energy (kWh)_1_1')),
+  (*split_sequence(training_df['Energy (kWh)_2_1'], steps), test_df.pop('Energy (kWh)_2_1')),
+  (*split_sequence(training_df['Energy (kWh)_1_2'], steps), test_df.pop('Energy (kWh)_1_2')),
+  (*split_sequence(training_df['Energy (kWh)_2_2'], steps), test_df.pop('Energy (kWh)_2_2')),
   # (*split_sequence(training_df['I5-N VDS 716974'], steps), test_df.pop('I5-N VDS 716974')),
 ]
 
@@ -134,8 +151,9 @@ class Client():
 
     self.model = keras.Sequential()
     self.model.add(keras.layers.InputLayer((steps, 1)))
-    self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
-    self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+    self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+    self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
+    self.model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
     self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
     self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
@@ -145,7 +163,7 @@ class Client():
       for layer_index in range(len(self.model.layers)):
         self.model.layers[layer_index].set_weights(weights[layer_index])
 
-    self.model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='-1')
+    self.model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
   
   def evaluate(self, label):
     yhat = self.model.predict(self.test_df)
@@ -156,6 +174,7 @@ class Client():
     plt.plot(pd.DataFrame(yhat, index=self.test_df.index), label='predicted')
     plt.legend()
     plt.savefig(f'{path}/model_{label}')
+    plt.show()
     plt.clf()
 
 
@@ -167,8 +186,9 @@ client_models = [ Client(client[0], client[1], client[2]) for client in clients 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
   global_model.add(keras.layers.InputLayer((steps, 1)))
-  global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))  # global_model.add(keras.layers.LSTM(1, seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+  global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
   global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
   global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
@@ -203,23 +223,25 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
   return global_model
 
-round_count = 3
+round_count = 5
 epoch_count = 200
 model_layout = """
 Client Model:
 model = keras.Sequential()
-model.add(keras.layers.InputLayer((steps, 1)))
-model.add(keras.layers.LSTM(units=64, ))
-model.add(keras.layers.Dense(units=8, activation='relu', ))
-model.add(keras.layers.Dense(units=1, activation='linear', ))
-model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
-model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
 
 Global Model:
 global_model.add(keras.layers.InputLayer((steps, 1)))
-global_model.add(keras.layers.LSTM(units=64, ))
-global_model.add(keras.layers.Dense(units=8, activation='relu', ))
-global_model.add(keras.layers.Dense(units=1, activation='linear', ))
+global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
+global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
 global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 """
 
