@@ -15,6 +15,7 @@ from sklearn.preprocessing import MinMaxScaler
 from flwr.common.logger import log
 from pathlib import Path
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 time_ = int(time.time())
 
@@ -33,14 +34,14 @@ data_df['Start Date'] = data_df['Start Date'].dt.floor('D')
 data_df.set_index('Start Date', inplace=True)
 # data_df.resample('D').sum().sort_index(inplace=True)
 # data_df.sort_values(by=['Station Name', ], inplace=True)
-print(data_df)
+# print(data_df)
 
 plt.ylabel('kWh')
 plt.plot(data_df['Energy (kWh)'], label='observed')
 plt.legend()
 plt.clf()
 # plt.show()
-print(data_df)
+# print(data_df)
 
 stations = {}
 for key in data_df['Station Name']:
@@ -52,44 +53,59 @@ for key in data_df['Station Name']:
 for key, value in stations.items():
   print(key, value)
 
-client_1 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #3'].pop('Energy (kWh)')
+# client_1 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #3'].pop('Energy (kWh)')
 client_2 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #4'].pop('Energy (kWh)')
 client_3 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #5'].pop('Energy (kWh)')
 client_4 = data_df[data_df['Station Name'] == 'PALO ALTO CA / MPL #6'].pop('Energy (kWh)')
+# print(client_2.shape)
+
+# exit()
 
 # client_1.drop('Station Name', inplace=True)
 # client_2.drop('Station Name', inplace=True)
 
-client_1 = client_1.resample('D', group_keys=True).sum()
+# client_1 = client_1.resample('D', group_keys=True).sum()
 client_2 = client_2.resample('D', group_keys=True).sum()
 client_3 = client_3.resample('D', group_keys=True).sum()
 client_4 = client_4.resample('D', group_keys=True).sum()
 
-print(client_1)
-print(client_2)
+client_2 = pd.DataFrame(ExponentialSmoothing(client_2, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2014-09-24':'2016-09-24']
+client_3 = pd.DataFrame(ExponentialSmoothing(client_3, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2014-09-24':'2016-09-24']
+client_4 = pd.DataFrame(ExponentialSmoothing(client_4, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2014-09-24':'2016-09-24']
 
-merged_data_df_1 = pd.merge(client_1, client_2, how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
+plt.plot(client_2)
+plt.legend()
+# plt.show()
+plt.clf()
+# decomposed_client_2 = seasonal_decompose(client_4, period=30)
+# decomposed_client_2.plot().show()
+# print(client_1)
+print(client_2)
+print(client_3)
+print(client_4)
+
+# merged_data_df_1 = pd.merge(client_1, client_2, how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
 merged_data_df_2 = pd.merge(client_3, client_4, how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
-merged_data_df = pd.merge(merged_data_df_1, merged_data_df_2,  how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
+merged_data_df = pd.merge(client_2, merged_data_df_2,  how='outer', suffixes=('_1', '_2'), left_index=True, right_index=True)
 merged_data_df.fillna(0, inplace=True)
-print(merged_data_df)
+print(merged_data_df.columns)
 # exit()
 normalized_df = pd.DataFrame()
 normalized_df.index = merged_data_df.index
 scalar = MinMaxScaler(feature_range=(0,1))
-normalized_df['Energy (kWh)_1_1'] = scalar.fit_transform(merged_data_df['Energy (kWh)_1_1'].to_numpy().reshape(-1, 1))
-normalized_df['Energy (kWh)_2_1'] = scalar.fit_transform(merged_data_df['Energy (kWh)_2_1'].to_numpy().reshape(-1, 1))
-normalized_df['Energy (kWh)_1_2'] = scalar.fit_transform(merged_data_df['Energy (kWh)_1_2'].to_numpy().reshape(-1, 1))
-normalized_df['Energy (kWh)_2_2'] = scalar.fit_transform(merged_data_df['Energy (kWh)_2_2'].to_numpy().reshape(-1, 1))
+normalized_df['Energy (kWh)'] = scalar.fit_transform(merged_data_df[0].to_numpy().reshape(-1, 1))
+normalized_df['Energy (kWh)_1'] = scalar.fit_transform(merged_data_df['0_1'].to_numpy().reshape(-1, 1))
+normalized_df['Energy (kWh)_2'] = scalar.fit_transform(merged_data_df['0_2'].to_numpy().reshape(-1, 1))
+# normalized_df['Energy (kWh)_2_2'] = scalar.fit_transform(merged_data_df['Energy (kWh)_2_2'].to_numpy().reshape(-1, 1))
 
-print(normalized_df['Energy (kWh)_1_1'])
+print(normalized_df['Energy (kWh)'])
 plt.xlabel('hour')
 plt.ylabel('Energy')
 plt.title('Client 1')
-plt.plot(normalized_df['Energy (kWh)_1_1'], label='client_1')
+plt.plot(normalized_df['Energy (kWh)'], label='client_1')
 
 plt.legend()
-plt.show()
+# plt.show()
 
 plt.clf()
 
@@ -104,8 +120,8 @@ plt.clf()
 # plt.clf()
 
 
-training_df = normalized_df[:int(len(normalized_df) * .7)]
-test_df = normalized_df[int(len(normalized_df) * .7):]
+training_df = normalized_df[:'2015-09-24']
+test_df = normalized_df['2015-09-24':]
 
 def split_sequence(sequence, n_steps):
   X, y = list(), list()
@@ -124,10 +140,10 @@ def split_sequence(sequence, n_steps):
 steps = 1
 
 clients = [
-  (*split_sequence(training_df['Energy (kWh)_1_1'], steps), test_df.pop('Energy (kWh)_1_1')),
-  (*split_sequence(training_df['Energy (kWh)_2_1'], steps), test_df.pop('Energy (kWh)_2_1')),
-  (*split_sequence(training_df['Energy (kWh)_1_2'], steps), test_df.pop('Energy (kWh)_1_2')),
-  (*split_sequence(training_df['Energy (kWh)_2_2'], steps), test_df.pop('Energy (kWh)_2_2')),
+  (*split_sequence(training_df['Energy (kWh)'], steps), test_df.pop('Energy (kWh)')),
+  (*split_sequence(training_df['Energy (kWh)_1'], steps), test_df.pop('Energy (kWh)_1')),
+  (*split_sequence(training_df['Energy (kWh)_2'], steps), test_df.pop('Energy (kWh)_2')),
+  # (*split_sequence(training_df['Energy (kWh)_2_2'], steps), test_df.pop('Energy (kWh)_2_2')),
   # (*split_sequence(training_df['I5-N VDS 716974'], steps), test_df.pop('I5-N VDS 716974')),
 ]
 
@@ -151,9 +167,8 @@ class Client():
 
     self.model = keras.Sequential()
     self.model.add(keras.layers.InputLayer((steps, 1)))
-    self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
-    self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
-    self.model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+    self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+    self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
     self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
     self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
@@ -174,7 +189,7 @@ class Client():
     plt.plot(pd.DataFrame(yhat, index=self.test_df.index), label='predicted')
     plt.legend()
     plt.savefig(f'{path}/model_{label}')
-    plt.show()
+    # plt.show()
     plt.clf()
 
 
@@ -186,9 +201,8 @@ client_models = [ Client(client[0], client[1], client[2]) for client in clients 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
   global_model.add(keras.layers.InputLayer((steps, 1)))
-  global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
-  global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
   global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
   global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
@@ -229,19 +243,19 @@ model_layout = """
 Client Model:
 model = keras.Sequential()
 self.model.add(keras.layers.InputLayer((steps, 1)))
-self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
-self.model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
-self.model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.LSTM(units=200,  return_sequences=True))
+self.model.add(keras.layers.LSTM(units=64,  ))
+self.model.add(keras.layers.Dense(units=8, activation='relu',  ))
+self.model.add(keras.layers.Dense(units=1, activation='linear',  ))
 self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
 
 Global Model:
 global_model.add(keras.layers.InputLayer((steps, 1)))
-global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg(), return_sequences=True))
-global_model.add(keras.layers.LSTM(units=200, kernel_constraint=keras.constraints.NonNeg()))
-global_model.add(keras.layers.Dense(units=32, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.LSTM(units=200,  return_sequences=True))
+global_model.add(keras.layers.LSTM(units=64,  ))
+global_model.add(keras.layers.Dense(units=8, activation='relu',  ))
+global_model.add(keras.layers.Dense(units=1, activation='linear',  ))
 global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 """
 
@@ -277,14 +291,14 @@ i = 1
 for client in clients:
   global_test = client[2]
   yhat = model.predict(global_test)
-  # yhat = scalar.inverse_transform(yhat)
-  # global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
+  yhat = scalar.inverse_transform(yhat)
+  global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
 
   plt.xlabel('events')
   plt.ylabel('Energy (kWh)')
   plt.title(f'Global Model Observed Prediction {time_}')
   plt.plot(global_test, label='true')
-  plt.plot(pd.DataFrame(yhat, index=global_test.index), label='predicted')
+  plt.plot(yhat, label='predicted')
   plt.legend()
   plt.savefig(f'{path.as_posix()}/global_model_local_{i}_{int(time_)}.png')
   plt.clf()

@@ -1,0 +1,45 @@
+TIMESTAMP: 1720582386
+Model description: 
+Client Model:
+self.model = keras.Sequential()
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
+
+Global Model:
+global_model = keras.Sequential()
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLIENT 1 ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+LSTM R2 score 0.9954492417334618
+LSTM MSE score 1.2628023038002802
+LSTM MAPE score 0.0427478000149135
+LSTM MAE score 1.0542504834289272
+LSTM MDAE score 1.1469135101903092
+LSTM RMSE score 1.123744768085832
+
+	### CLIENT 2 ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+LSTM R2 score 0.9554631516722072
+LSTM MSE score 1.7846752735498448
+LSTM MAPE score 0.027465777775679795
+LSTM MAE score 1.3199376661246165
+LSTM MDAE score 1.3291052778241834
+LSTM RMSE score 1.335917390241569
+
+	### CLIENT 3 ###
+Global Model: Rounds: 5 Epochs: 200  Steps: 1
+LSTM R2 score 0.9308923080866192
+LSTM MSE score 1.9990024121897556
+LSTM MAPE score 0.027786086402583926
+LSTM MAE score 1.4035076883262771
+LSTM MDAE score 1.4185606772346802
+LSTM RMSE score 1.4138608178281749
