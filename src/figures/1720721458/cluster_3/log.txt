@@ -1,0 +1,132 @@
+TIMESTAMP: 1720721458
+Model description: 
+Client Model:
+self.model = keras.Sequential()
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
+
+Global Model:
+global_model = keras.Sequential()
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLUSTER 1 ###
+	
+	### CLIENT 1 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.902553909366894
+	LSTM MSE score 8.719358199519469
+	LSTM MAPE score 0.045069009458225444
+	LSTM MAE score 2.5139482075706603
+	LSTM MDAE score 2.3190269923894924
+	LSTM RMSE score 2.952855939513384
+	
+	### CLIENT 2 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.8891090083761279
+	LSTM MSE score 14.948043660992793
+	LSTM MAPE score 0.060756104590243505
+	LSTM MAE score 3.5805838645924966
+	LSTM MDAE score 3.930595753807239
+	LSTM RMSE score 3.8662699932871725
+	
+	### CLIENT 3 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.7133065870043829
+	LSTM MSE score 17.734342456459206
+	LSTM MAPE score 0.06638182651026239
+	LSTM MAE score 4.082517510731556
+	LSTM MDAE score 4.280303273046428
+	LSTM RMSE score 4.2112162680702125
+
+	### CLUSTER 2 ###
+	
+	### CLIENT 1 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.9258327749369669
+	LSTM MSE score 4.266437579706943
+	LSTM MAPE score 0.031810906643981195
+	LSTM MAE score 1.7949532200396223
+	LSTM MDAE score 1.7439678923591835
+	LSTM RMSE score 2.065535664109178
+	
+	### CLIENT 2 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.9387440850376884
+	LSTM MSE score 4.269539964575139
+	LSTM MAPE score 0.03018647396899891
+	LSTM MAE score 1.712038731525378
+	LSTM MDAE score 1.6209778240046937
+	LSTM RMSE score 2.066286515605989
+	
+	### CLIENT 3 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.9273559113243058
+	LSTM MSE score 3.781323226908592
+	LSTM MAPE score 0.029331055760733783
+	LSTM MAE score 1.6458935322460333
+	LSTM MDAE score 1.6017184483302813
+	LSTM RMSE score 1.9445624769877135
+
+	### CLUSTER 3 ###
+	
+	### CLIENT 1 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.5289779739010245
+	LSTM MSE score 18.236033914588646
+	LSTM MAPE score 0.061500487521548575
+	LSTM MAE score 3.8963273887412977
+	LSTM MDAE score 3.975140690702151
+	LSTM RMSE score 4.270366953153868
+	
+	### CLIENT 2 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.8123241306261214
+	LSTM MSE score 13.425182065513475
+	LSTM MAPE score 0.05109020467628606
+	LSTM MAE score 3.085494367774049
+	LSTM MDAE score 2.8410164223049534
+	LSTM RMSE score 3.6640390371164817
+	
+	### CLIENT 3 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.892029516468875
+	LSTM MSE score 5.040693461203031
+	LSTM MAPE score 0.03711342810509433
+	LSTM MAE score 1.7676542649804912
+	LSTM MDAE score 1.5032783642748875
+	LSTM RMSE score 2.2451488728373965
+	
+	### CLIENT 4 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.8871976661590958
+	LSTM MSE score 4.444969917741513
+	LSTM MAPE score 0.03466816954159402
+	LSTM MAE score 1.6953605115017025
+	LSTM MDAE score 1.497309258669837
+	LSTM RMSE score 2.1083097300305553
+	
+	### CLIENT 5 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.800979940864881
+	LSTM MSE score 12.095098876212681
+	LSTM MAPE score 0.048613299212840744
+	LSTM MAE score 2.923122806869323
+	LSTM MDAE score 2.783374644278144
+	LSTM RMSE score 3.477800867820451
+	
+	### CLIENT 6 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.8745490243996495
+	LSTM MSE score 9.560063301870267
+	LSTM MAPE score 0.04733253228933942
+	LSTM MAE score 2.522349680292737
+	LSTM MDAE score 2.3022751646235875
+	LSTM RMSE score 3.0919352033751073

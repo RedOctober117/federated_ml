@@ -1,0 +1,47 @@
+TIMESTAMP: 1720723157
+Model description: 
+Client Model:
+self.model = keras.Sequential()
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+# self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
+
+Global Model:
+global_model = keras.Sequential()
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+# global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLUSTER 1 ###
+	
+	### CLIENT 1 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.9573780676934003
+	LSTM MSE score 3.8137588950198
+	LSTM MAPE score 0.03613266040223074
+	LSTM MAE score 1.5966614890482047
+	LSTM MDAE score 1.5185024663164768
+	LSTM RMSE score 1.9528847623502519
+	
+	### CLIENT 2 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.9727076655200578
+	LSTM MSE score 3.6789914261057923
+	LSTM MAPE score 0.02981453107789259
+	LSTM MAE score 1.1741935455245858
+	LSTM MDAE score 0.5024563091810421
+	LSTM RMSE score 1.9180697135677296
+	
+	### CLIENT 3 ###
+	Global Model: Rounds: 5 Epochs: 20  Steps: 1
+	LSTM R2 score 0.9784490329728164
+	LSTM MSE score 1.3331043274920937
+	LSTM MAPE score 0.013697611515881095
+	LSTM MAE score 0.6156509468257373
+	LSTM MDAE score 0.3217761184330641
+	LSTM RMSE score 1.1546013716829258

@@ -1,0 +1,25 @@
+TIMESTAMP: 1720713222
+Model description: 
+Meta Model:
+meta_model = keras.Sequential()
+meta_model.add(keras.layers.InputLayer((steps, 1)))
+meta_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+meta_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+meta_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+meta_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### META MODEL OBSERVED ###
+LSTM R2 score 0.9626176926246132
+LSTM MSE score 3.344923600452774
+LSTM MAPE score 0.030783001490613728
+LSTM MAE score 1.4966752728609605
+LSTM MDAE score 1.3064061860755594
+LSTM RMSE score 1.8289132293394277
+
+	### META MODEL UNOBSERVED ###
+LSTM R2 score -12.607123063715202
+LSTM MSE score 3163337.8315542745
+LSTM MAPE score 0.6776463339438535
+LSTM MAE score 1712.4260009505258
+LSTM MDAE score 1677.4959633852377
+LSTM RMSE score 1778.577474150135

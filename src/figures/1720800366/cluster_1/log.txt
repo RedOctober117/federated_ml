@@ -1,0 +1,47 @@
+TIMESTAMP: 1720800366
+Model description: 
+Client Model:
+self.model = keras.Sequential()
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
+
+Global Model:
+global_model = keras.Sequential()
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLUSTER 1 ###
+	
+	### CLIENT 1 ###
+	Global Model: Rounds: 3 Epochs: 20  Steps: 1
+	LSTM R2 score 0.7951191038835759
+	LSTM MSE score 18.36803529993014
+	LSTM MAPE score 0.07890910203740809
+	LSTM MAE score 3.5708713038938047
+	LSTM MDAE score 3.335485334079223
+	LSTM RMSE score 4.285794593763231
+	
+	### CLIENT 2 ###
+	Global Model: Rounds: 3 Epochs: 20  Steps: 1
+	LSTM R2 score 0.8613613818496415
+	LSTM MSE score 18.73883545312832
+	LSTM MAPE score 0.07179622938728057
+	LSTM MAE score 3.1113499175603345
+	LSTM MDAE score 2.1774997900001267
+	LSTM RMSE score 4.328837656129913
+	
+	### CLIENT 3 ###
+	Global Model: Rounds: 3 Epochs: 20  Steps: 1
+	LSTM R2 score 0.8694794530834795
+	LSTM MSE score 8.087552438649773
+	LSTM MAPE score 0.03861227119749786
+	LSTM MAE score 1.9871844692075014
+	LSTM MDAE score 1.458561132641094
+	LSTM RMSE score 2.843862239745409
