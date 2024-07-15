@@ -16,7 +16,7 @@ from flwr.common.logger import log
 from pathlib import Path
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.seasonal import seasonal_decompose
-import yfinance as yf
+# import yfinance as yf
 
 time_ = int(time.time())
 
@@ -31,24 +31,6 @@ data_df['Start Date'] = pd.to_datetime(data_df['Start Date'])
 data_df['Start Date'] = data_df['Start Date'].dt.floor('D')
 data_df.set_index('Start Date', inplace=True)
 
-# tf_data = pd.read_csv('all_sample.csv')
-# tf_retained_columns = ['datetime', 'I5-N VDS 759576', 'I5-N VDS 763237', 'I5-N VDS 759602', 'I5-N VDS 716974', 'I5-S VDS 71693']
-# tf_data_df = tf_data.loc[:, tf_retained_columns]
-
-# tf_data_df = yf.download("SPY", start="2017-01-01", end="2018-01-01")
-# # print(tf_data_df.index)
-# # plt.plot(tf_data_df['Close'])
-# # plt.show(block=False)
-# # plt.clf()
-# tf_normalized_df = pd.DataFrame()
-# tf_normalized_df.index = tf_data_df.index
-# tf_scalar = MinMaxScaler(feature_range=(0,1))
-# # tf_normalized_df['datetime'] = pd.to_datetime(tf_data_df['Date'], format='%m/%d/%Y %H:%M')
-# tf_normalized_df['Close'] = tf_scalar.fit_transform(tf_data_df['Close'].to_numpy().reshape(-1, 1))
-
-# tf_normalized_df = tf_normalized_df.pop('Close')
-# tf_test_df_1 = tf_normalized_df[:int(len(tf_normalized_df) * .7)]
-# tf_test_df_2 = tf_normalized_df[int(len(tf_normalized_df) * .7):]
 # stations = {}
 # for key in data_df['Station Name']:
 #   if key in stations:
@@ -85,14 +67,20 @@ client_tables = {
   ]
 }
 
-
+j = 1
 for key, clients in client_tables.items():
   temp_list = []
+  i = 1
   for client in clients:
     fitted_client = client.resample('D', group_keys=True).sum()
+    plt.plot(fitted_client)
+    plt.savefig(f'{path.as_posix()}/cluster_{j}_client_{i}.png')
+    plt.clf()
+    i += 1
     fitted_client = pd.DataFrame(ExponentialSmoothing(fitted_client, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2018-01-01':'2020-01-01']
     temp_list.append(fitted_client)
   client_tables[key] = temp_list
+  j += 1
 
 merged_clients = list()
 for clients in client_tables.values():
@@ -125,11 +113,18 @@ normalized_unobserved_test[0] = scalar.fit_transform(fitted_unobserved_test.to_n
 normalized_unobserved_test_x = normalized_unobserved_test[:'2019-01-01']
 normalized_unobserved_test_y = normalized_unobserved_test['2019-01-01':]
 
-
-# for cluster in normalized_clusters:
-#   # print(cluster.)
-#   print(cluster.describe(), end='\n\n\n')
-
+i = 1
+for cluster in normalized_clusters:
+  j = 1
+  for client in cluster:
+    plt.plot(cluster[client])
+    plt.savefig(f'{path.as_posix()}/smoothed_cluster_{i}_client_{j}.png')
+    plt.clf()
+    j += 1
+  i += 1
+  print(cluster.info())
+  print(cluster.describe(), end='\n\n\n')
+exit()
 training_clusters = list()
 testing_clusters = list()
 
