@@ -74,9 +74,9 @@ client_tables = {
     data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #1'].pop('Energy (kWh)'),
     data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #2'].pop('Energy (kWh)'),
     data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #3'].pop('Energy (kWh)'),
-    data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #4'].pop('Energy (kWh)'),
-    data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #5'].pop('Energy (kWh)'),
-    data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #6'].pop('Energy (kWh)'),
+    # data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #4'].pop('Energy (kWh)'),
+    # data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #5'].pop('Energy (kWh)'),
+    # data_df[data_df['Station Name'] == 'PALO ALTO CA / BRYANT #6'].pop('Energy (kWh)'),
   ],
   'HIGH': [
     data_df[data_df['Station Name'] == 'PALO ALTO CA / HIGH #1'].pop('Energy (kWh)'),
@@ -90,7 +90,7 @@ for key, clients in client_tables.items():
   temp_list = []
   for client in clients:
     fitted_client = client.resample('D', group_keys=True).sum()
-    fitted_client = pd.DataFrame(ExponentialSmoothing(fitted_client, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2018-01-01':'2020-01-01']
+    fitted_client = pd.DataFrame(ExponentialSmoothing(fitted_client, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2017-01-01':'2019-01-01']
     temp_list.append(fitted_client)
   client_tables[key] = temp_list
 
@@ -107,35 +107,53 @@ for clients in client_tables.values():
       i += 1
   merged_clients.append(previous_merge)
 
+def remove_outliers(items, quartiles, mean):
+  new_array = list()
+  for x in items:
+    if x > quartiles[1] or x < quartiles[0]:
+      print(f'REPLACING {x} WITH {mean}')
+      new_array.append(mean)
+    else:
+      print(f'KEEPING x: {x}')
+      new_array.append(x)
+
+  return np.array(new_array)
+    
+
 scalar = MinMaxScaler(feature_range=(0,1))
 normalized_clusters = list()
 for cluster in merged_clients:
   normalized_clients = pd.DataFrame()
   normalized_clients.index = cluster.index 
   for client in cluster:
+    # print(cluster[client].quantile(q=[0.25, 0.75]).to_numpy())
+    # trimmed_client = pd.DataFrame(remove_outliers(cluster[client], cluster[client].quantile(q=[0.05, 0.95]).to_numpy(), cluster[client].mean()), index=cluster[client].index)
     normalized_clients[client] = scalar.fit_transform(cluster[client].to_numpy().reshape(-1, 1))
   normalized_clusters.append(normalized_clients)
-
+# exit()
 unobserved_test = data_df[data_df['Station Name'] == 'PALO ALTO CA / TED THOMPSON #1'].pop('Energy (kWh)')
 fitted_unobserved_test = unobserved_test.resample('D', group_keys=True).sum()
-fitted_unobserved_test = pd.DataFrame(ExponentialSmoothing(fitted_unobserved_test, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2018-01-01':'2020-01-01']
+fitted_unobserved_test = pd.DataFrame(ExponentialSmoothing(fitted_unobserved_test, trend='add', seasonal='add', seasonal_periods=30).fit().fittedvalues)['2017-01-01':'2019-01-01']
 normalized_unobserved_test = pd.DataFrame()
 normalized_unobserved_test.index = fitted_unobserved_test.index
 normalized_unobserved_test[0] = scalar.fit_transform(fitted_unobserved_test.to_numpy().reshape(-1, 1))
-normalized_unobserved_test_x = normalized_unobserved_test[:'2019-01-01']
-normalized_unobserved_test_y = normalized_unobserved_test['2019-01-01':]
+normalized_unobserved_test_x = normalized_unobserved_test[:'2018-01-01']
+normalized_unobserved_test_y = normalized_unobserved_test['2018-01-01':]
 
 
-# for cluster in normalized_clusters:
-#   # print(cluster.)
-#   print(cluster.describe(), end='\n\n\n')
+for cluster in normalized_clusters:
+  print(cluster.info())
+  print(cluster.describe(), end='\n\n\n')
+# exit()
 
+print(normalized_clusters[2].head())
+# exit()
 training_clusters = list()
 testing_clusters = list()
 
 for cluster in normalized_clusters:
-  training_clusters.append(cluster[:'2019-01-01'])
-  testing_clusters.append(cluster['2019-01-01':])
+  training_clusters.append(cluster[:'2018-01-01'])
+  testing_clusters.append(cluster['2018-01-01':])
 
 def split_sequence(sequence, n_steps):
   X, y = list(), list()
@@ -166,7 +184,6 @@ prepared_clusters = list()
 for cluster_index in range(len(training_clusters)):
   prepared_cluster = list()
   for client in training_clusters[cluster_index]:
-    print(client)
     prepared_cluster.append((*split_sequence(training_clusters[cluster_index][client], steps), *split_sequence(testing_clusters[cluster_index][client], steps), normalized_clusters[cluster_index][client]))
   prepared_clusters.append(prepared_cluster)
 
@@ -199,13 +216,13 @@ class Client():
   
   def evaluate(self, label, path):
     # yhat = pd.DataFrame(self.model.predict(self.x_train), index=self.test_df.index)
-    yhat = self.model.predict(self.x_test)
-    print(len(yhat))
+    yhat = self.model.predict(self.x_train)
+    # print(len(yhat))
 
     plt.xlabel('events')
     plt.ylabel('traffic')
     plt.title(f'Model {label}')
-    plt.plot(self.y_test, label='true')
+    plt.plot(self.x_test, label='true')
     plt.plot(yhat, label='predicted')
     plt.legend()
     plt.savefig(f'{path}/model_{label}')
@@ -273,8 +290,8 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
   return global_model
 
-round_count = 3
-epoch_count = 200
+round_count = 5
+epoch_count = 10
 model_layout = """
 Client Model:
 self.model = keras.Sequential()
@@ -310,6 +327,7 @@ for cluster in cluster_client_models:
 
   for client in cluster:
     yhat, actual = plot_evaluation(model.predict(client.x_train), client.x_test, f'Global Model Observed Prediction {time_}', f'{path.as_posix()}/cluster_{j}/global_model_local_{i}_{int(time_)}.png')
+    # yhat = yhat[:len(actual)]
     # global_test = client.x_test
     # yhat = model.predict(global_test)
     # yhat = scalar.inverse_transform(yhat)
@@ -364,6 +382,7 @@ for layer_index in range(len(meta_model.layers)):
 
 
 yhat, actual = plot_evaluation(cluster_client_models[0][0].x_train, cluster_client_models[0][0].x_test, f'Meta Model Observed Prediction {time_}', f'{path.as_posix()}/meta_model_cluster_1_client_1_{int(time_)}.png')
+yhat = yhat[:len(actual)]
 
 # global_test_x = cluster_client_models[0][0].x_test
 # global_test_y = cluster_client_models[0][0].y_test
@@ -401,7 +420,7 @@ logs.append(f'LSTM MAE score {mean_absolute_error(actual, yhat)}\n')
 logs.append(f'LSTM MDAE score {median_absolute_error(actual, yhat)}\n')
 logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(actual, yhat))}\n')
 
-yhat, actual = plot_evaluation(meta_model.predict(normalized_unobserved_test_x), normalized_unobserved_test_y[0], f'Meta Model Unobserved Prediction {time_}\n TED THOMPSON #1', f'{path.as_posix()}/meta_model_unobserved_client_{int(time_)}.png')
+# yhat, actual = plot_evaluation(meta_model.predict(normalized_unobserved_test_x), normalized_unobserved_test_y[0], f'Meta Model Unobserved Prediction {time_}\n TED THOMPSON #1', f'{path.as_posix()}/meta_model_unobserved_client_{int(time_)}.png')
 
 # global_test = normalized_unobserved_test_1
 # yhat = meta_model.predict(global_test)
@@ -417,13 +436,13 @@ yhat, actual = plot_evaluation(meta_model.predict(normalized_unobserved_test_x),
 # plt.savefig(f'{path.as_posix()}/meta_model_unobserved_client_{int(time_)}.png')
 # plt.clf()
 
-logs.append(f'\n\t### META MODEL UNOBSERVED ###\n')
-logs.append(f'LSTM R2 score {r2_score(actual, yhat)}\n')
-logs.append(f'LSTM MSE score {mean_squared_error(actual, yhat)}\n')
-logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(actual, yhat)}\n')
-logs.append(f'LSTM MAE score {mean_absolute_error(actual, yhat)}\n')
-logs.append(f'LSTM MDAE score {median_absolute_error(actual, yhat)}\n')
-logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(actual, yhat))}\n')
+# logs.append(f'\n\t### META MODEL UNOBSERVED ###\n')
+# logs.append(f'LSTM R2 score {r2_score(actual, yhat)}\n')
+# logs.append(f'LSTM MSE score {mean_squared_error(actual, yhat)}\n')
+# logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(actual, yhat)}\n')
+# logs.append(f'LSTM MAE score {mean_absolute_error(actual, yhat)}\n')
+# logs.append(f'LSTM MDAE score {median_absolute_error(actual, yhat)}\n')
+# logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(actual, yhat))}\n')
 
 # global_test = tf_test_df_2
 # yhat = meta_model.predict(tf_test_df_2)
