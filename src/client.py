@@ -44,93 +44,98 @@ plt.plot(normalized_df['I5-N VDS 759576'], label='traffic')
 
 plt.legend()
 # plt.show()
+plt.clf()
 
 
 training_df = normalized_df[:int(len(normalized_df) * .7)]
 test_df = normalized_df[int(len(normalized_df) * .7):]
 
-def split_sequence(sequence, n_steps):
- X, y = list(), list()
- for i in range(len(sequence)):
- # find the end of this pattern
-  end_ix = i + n_steps
- # check if we are beyond the sequence
-  if end_ix > len(sequence)-1:
-    break
- # gather input and output parts of the pattern
-  seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
-  X.append(seq_x)
-  y.append(seq_y)
- return np.array(X), np.array(y)
+def sliding_window(df, features):
+  x_out = list()
+  y_out = list()
 
-steps = 1
+  for i in range(features + 1, len(df) + 1):
+    x_out.append(df.iloc[i - (features + 1):i - 1])
+    y_out.append([df.iloc[i - 1]])
+
+  return np.array(x_out), np.array(y_out)
+
+steps = 24
 test_df = test_df.drop(columns='datetime')
 
 clients = [
-  (*split_sequence(training_df['I5-N VDS 759576'], steps), test_df.pop('I5-N VDS 759576')),
-  (*split_sequence(training_df['I5-N VDS 763237'], steps), test_df.pop('I5-N VDS 763237')),
-  (*split_sequence(training_df['I5-N VDS 759602'], steps), test_df.pop('I5-N VDS 759602')),
-  (*split_sequence(training_df['I5-N VDS 716974'], steps), test_df.pop('I5-N VDS 716974')),
+  (*sliding_window(training_df['I5-N VDS 759576'], steps), *sliding_window(test_df.pop('I5-N VDS 759576'), steps)),
+  (*sliding_window(training_df['I5-N VDS 763237'], steps), *sliding_window(test_df.pop('I5-N VDS 763237'), steps)),
+  (*sliding_window(training_df['I5-N VDS 759602'], steps), *sliding_window(test_df.pop('I5-N VDS 759602'), steps)),
+  (*sliding_window(training_df['I5-N VDS 716974'], steps), *sliding_window(test_df.pop('I5-N VDS 716974'), steps)),
 ]
 
-global_test = test_df.pop('I5-S VDS 71693')
+global_test_x, global_test_y = sliding_window(test_df.pop('I5-S VDS 71693'), steps)
 
 # IDEA: Gather a single sensor and split data into 4 equal sets for 4 clients. 
 # Test global model on both the original total data set and then on each 
 # individual client set.
 
 class Client():
-  def __init__(self, x_train, y_train, test_df):
-    self._x_train = x_train
-    self._y_train = y_train
-    self.test_df = test_df
+  def __init__(self, x_train, y_train, x_test, y_test):
+    self.x_train = x_train
+    self.y_train = y_train
+    self.x_test = x_test
+    self.y_test = y_test
 
     self.model = keras.Sequential()
-    self.model.add(keras.layers.InputLayer((steps, 1)))
-    self.model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
-    self.model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-    self.model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+    self.model.add(keras.layers.LSTM(200, activation='relu', input_shape=(steps, 1)))
+    self.model.add(keras.layers.RepeatVector(1))
+
+    self.model.add(keras.layers.LSTM(200, activation='relu', return_sequences=True))
+    self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+    self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+    self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
     self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
-  def train(self, weights=None, epochs=100):
+  def train(self, weights, epochs=100):
     print('Training. . .')
-    if weights is not None:
+    if len(weights) is not 0:
       for layer_index in range(len(self.model.layers)):
         self.model.layers[layer_index].set_weights(weights[layer_index])
 
-    self.model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
+    self.model.fit(self.x_train, self.y_train, epochs=epochs, shuffle=False, verbose='3', )
   
   def evaluate(self, label):
-    yhat = self.model.predict(self.test_df)
+    yhat = self.model.predict(self.x_test).reshape(-1, 1)
     plt.xlabel('events')
     plt.ylabel('traffic')
     plt.title(f'Model {label}')
-    plt.plot(self.test_df, label='true')
-    plt.plot(pd.DataFrame(yhat, index=self.test_df.index), label='predicted')
+    plt.plot(self.y_test, label='true')
+    plt.plot(yhat, label='predicted')
     plt.legend()
     plt.savefig(f'{path}/model_{label}')
     plt.clf()
 
 
 
-client_models = [ Client(client[0], client[1], client[2]) for client in clients ]
+client_models = [ Client(client[0], client[1], client[2], client[3]) for client in clients ]
 
 
 
 def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.Sequential:
   global_model = keras.Sequential()
-  global_model.add(keras.layers.InputLayer((steps, 1)))
-  global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))  # global_model.add(keras.layers.LSTM(1, seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-  global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+  global_model.add(keras.layers.LSTM(200, activation='relu', input_shape=(steps, 1)))
+  global_model.add(keras.layers.RepeatVector(1))
+  global_model.add(keras.layers.LSTM(200, activation='relu', return_sequences=True))
+  global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+  global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+  global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
   global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 
-  weights = None
+  weights = list()
 
   for round in range(rounds):
     for client in clients:
       print(f'\n\t### ROUND {round}: Training client. . . ###\n')
       client.train(weights, epochs)
+
+    weights.clear()
 
     for layer_index in range(len(global_model.layers)):
       print(f'\n\t### ROUND {round}: Gathering weights for layer {layer_index}. . . ###\n')
@@ -147,7 +152,7 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
       print(f'\n\t### ROUND {round}: Updating weights for global model layer {layer_index}. . . ###\n')
       global_model.layers[layer_index].set_weights(new_global_weights)
-  weights = new_global_weights
+      weights.append(new_global_weights)
 
   i = 1
   for client in clients:
@@ -156,23 +161,23 @@ def federated_learning(clients, test_df, rounds=3, epochs=100) -> keras.models.S
 
   return global_model
 
-round_count = 3
-epoch_count = 200
+round_count = 20
+epoch_count = 50
 model_layout = """
 Client Model:
 model = keras.Sequential()
 model.add(keras.layers.InputLayer((steps, 1)))
-model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))
-model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+model.add(keras.layers.LSTM(units=64))
+model.add(keras.layers.Dense(units=8, activation='relu'))
+model.add(keras.layers.Dense(units=1, activation='linear'))
 model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False, verbose='3', )
 
 Global Model:
 global_model.add(keras.layers.InputLayer((steps, 1)))
-global_model.add(keras.layers.LSTM(units=64, kernel_constraint=keras.constraints.NonNeg()))  # global_model.add(keras.layers.LSTM(1, seed=1337, kernel_constraint=keras.constraints.NonNeg()))
-global_model.add(keras.layers.Dense(units=8, activation='relu', kernel_constraint=keras.constraints.NonNeg()))
-global_model.add(keras.layers.Dense(units=1, activation='linear', kernel_constraint=keras.constraints.NonNeg()))
+global_model.add(keras.layers.LSTM(units=64))  # global_model.add(keras.layers.LSTM(1, seed=1337))
+global_model.add(keras.layers.Dense(units=8, activation='relu'))
+global_model.add(keras.layers.Dense(units=1, activation='linear'))
 global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
 """
 
@@ -182,9 +187,10 @@ logs = []
 logs.append(f'Model description: {model_layout}')
 
 # global_test = client[2]
-yhat = model.predict(global_test)
-yhat = scalar.inverse_transform(yhat)
-global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
+global_test = global_test_y
+yhat = model.predict(global_test_x).reshape(-1, 1)
+# yhat = scalar.inverse_transform(yhat)
+# global_test = scalar.inverse_transform(global_test_y)
 
 plt.xlabel('events')
 plt.ylabel('traffic')
@@ -205,16 +211,16 @@ logs.append(f'LSTM MDAE score {median_absolute_error(global_test, yhat)}\n')
 logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(global_test, yhat))}\n')
 
 i = 1
-for client in clients:
-  global_test = client[2]
-  yhat = model.predict(global_test)
-  yhat = scalar.inverse_transform(yhat)
-  global_test = scalar.inverse_transform(global_test.to_numpy().reshape(-1, 1))
+for client in client_models:
+  actual = client.y_test
+  yhat = model.predict(client.x_test).reshape(-1, 1)
+  # yhat = scalar.inverse_transform(yhat)
+  # actual = scalar.inverse_transform(actual)
 
   plt.xlabel('events')
   plt.ylabel('traffic')
   plt.title(f'Global Model Observed Prediction {time_}')
-  plt.plot(global_test, label='true')
+  plt.plot(actual, label='true')
   plt.plot(yhat, label='predicted')
   plt.legend()
   plt.savefig(f'{path.as_posix()}/global_model_local_{i}_{int(time_)}.png')
@@ -222,12 +228,12 @@ for client in clients:
 
   logs.append(f'\n\t### CLIENT {i} ###\n')
   logs.append(f'Global Model: Rounds: {round_count} Epochs: {epoch_count}  Steps: {steps}\n')
-  logs.append(f'LSTM R2 score {sklearn.metrics.r2_score(global_test, yhat)}\n')
-  logs.append(f'LSTM MSE score {mean_squared_error(global_test, yhat)}\n')
-  logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(global_test, yhat)}\n')
-  logs.append(f'LSTM MAE score {mean_absolute_error(global_test, yhat)}\n')
-  logs.append(f'LSTM MDAE score {median_absolute_error(global_test, yhat)}\n')
-  logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(global_test, yhat))}\n')
+  logs.append(f'LSTM R2 score {sklearn.metrics.r2_score(actual, yhat)}\n')
+  logs.append(f'LSTM MSE score {mean_squared_error(actual, yhat)}\n')
+  logs.append(f'LSTM MAPE score {mean_absolute_percentage_error(actual, yhat)}\n')
+  logs.append(f'LSTM MAE score {mean_absolute_error(actual, yhat)}\n')
+  logs.append(f'LSTM MDAE score {median_absolute_error(actual, yhat)}\n')
+  logs.append(f'LSTM RMSE score {math.sqrt(mean_squared_error(actual, yhat))}\n')
   i += 1
 
 with open(f'{path.as_posix()}/log.txt', 'w') as file:
