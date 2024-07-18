@@ -86,7 +86,6 @@ class Client():
     self.model = keras.Sequential()
     self.model.add(keras.layers.LSTM(200, activation='relu', input_shape=(steps, 1)))
     self.model.add(keras.layers.RepeatVector(1))
-
     self.model.add(keras.layers.LSTM(200, activation='relu', return_sequences=True))
     self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
     self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
