@@ -1,0 +1,90 @@
+TIMESTAMP: 1721751887
+Model description: 
+Client Model:
+self.model = keras.Sequential()
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(100, activation='relu', input_shape=(steps, 1)))
+self.model.add(keras.layers.RepeatVector(1))
+self.model.add(keras.layers.LSTM(100, activation='relu', return_sequences=True))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
+
+Global Model:
+global_model = keras.Sequential()
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(100, activation='relu'))
+global_model.add(keras.layers.RepeatVector(1))
+global_model.add(keras.layers.LSTM(100, activation='relu', return_sequences=True))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLUSTER 1 ###
+	
+	### GLOBAL ON CLIENT 1 ###
+	Global Model: Rounds: 5 Epochs: 200  Steps: 7
+	LSTM R2 score 0.7286463975906372
+	LSTM MSE score 12.684336426034218
+	LSTM MAPE score 0.06374073312558104
+	LSTM MAE score 2.7536853752612993
+	LSTM MDAE score 2.4123761320981814
+	LSTM RMSE score 3.561507605780762
+	
+	### GLOBAL ON CLIENT 2 ###
+	Global Model: Rounds: 5 Epochs: 200  Steps: 7
+	LSTM R2 score 0.5798729658126831
+	LSTM MSE score 16.8670460457777
+	LSTM MAPE score 0.07369871606306466
+	LSTM MAE score 3.2906825351594136
+	LSTM MDAE score 2.813591618419757
+	LSTM RMSE score 4.106950942704052
+	
+	### GLOBAL ON CLIENT 3 ###
+	Global Model: Rounds: 5 Epochs: 200  Steps: 7
+	LSTM R2 score 0.6908966898918152
+	LSTM MSE score 11.839595210842251
+	LSTM MAPE score 0.05763676219039665
+	LSTM MAE score 2.6345042431161465
+	LSTM MDAE score 2.144411118254169
+	LSTM RMSE score 3.440871286584584
+
+	### CLUSTER 2 ###
+	
+	### GLOBAL ON CLIENT 1 ###
+	Global Model: Rounds: 5 Epochs: 200  Steps: 7
+	LSTM R2 score 0.520185649394989
+	LSTM MSE score 20.00564179951011
+	LSTM MAPE score 0.09143367302078002
+	LSTM MAE score 3.6712291737465543
+	LSTM MDAE score 3.175450542142883
+	LSTM RMSE score 4.472766682883214
+	
+	### GLOBAL ON CLIENT 2 ###
+	Global Model: Rounds: 5 Epochs: 200  Steps: 7
+	LSTM R2 score 0.28732770681381226
+	LSTM MSE score 18.153746995702125
+	LSTM MAPE score 0.08530263938006205
+	LSTM MAE score 3.3808561199328384
+	LSTM MDAE score 2.923759359740444
+	LSTM RMSE score 4.260721417283947
+	
+	### GLOBAL ON CLIENT 3 ###
+	Global Model: Rounds: 5 Epochs: 200  Steps: 7
+	LSTM R2 score 0.4712367057800293
+	LSTM MSE score 21.142635176778235
+	LSTM MAPE score 0.08301185292274871
+	LSTM MAE score 3.580116452692345
+	LSTM MDAE score 3.0372330681615907
+	LSTM RMSE score 4.5981121318186915

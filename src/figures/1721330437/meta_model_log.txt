@@ -1,0 +1,20 @@
+TIMESTAMP: 1721330437
+Model description: 
+Meta Model:
+meta_model = keras.Sequential()
+meta_model.add(keras.layers.InputLayer((steps, 1)))
+meta_model.add(keras.layers.LSTM(200, activation='relu'))
+meta_model.add(keras.layers.RepeatVector(1))
+meta_model.add(keras.layers.LSTM(200, activation='relu', return_sequences=True))
+meta_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+meta_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+meta_model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
+meta_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### META MODEL OBSERVED ###
+LSTM R2 score -4.713446793291696
+LSTM MSE score 0.061240038375579314
+LSTM MAPE score 482817058708.45184
+LSTM MAE score 0.22535396099663488
+LSTM MDAE score 0.21436740470177074
+LSTM RMSE score 0.24746724707641476

@@ -1,0 +1,53 @@
+TIMESTAMP: 1721317713
+Model description: 
+Client Model:
+self.model = keras.Sequential()
+self.model.add(keras.layers.InputLayer((steps, 1)))
+self.model.add(keras.layers.LSTM(200, activation='relu', input_shape=(steps, 1)))
+self.model.add(keras.layers.RepeatVector(1))
+self.model.add(keras.layers.LSTM(200, activation='relu', return_sequences=True))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+self.model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
+self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+model.fit(self._x_train, self._y_train, epochs=epochs, shuffle=False)
+
+Global Model:
+global_model = keras.Sequential()
+global_model.add(keras.layers.InputLayer((steps, 1)))
+global_model.add(keras.layers.LSTM(200, activation='relu'))
+global_model.add(keras.layers.RepeatVector(1))
+global_model.add(keras.layers.LSTM(200, activation='relu', return_sequences=True))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(16, activation='relu')))
+global_model.add(keras.layers.TimeDistributed(keras.layers.Dense(1, activation='linear')))
+global_model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[keras.metrics.MeanSquaredError()])
+
+	### CLUSTER 1 ###
+	
+	### CLIENT 1 ###
+	Global Model: Rounds: 20 Epochs: 100  Steps: 7
+	LSTM R2 score 0.37810879945755005
+	LSTM MSE score 29.070105943582234
+	LSTM MAPE score 0.08955828620336952
+	LSTM MAE score 3.792626818098126
+	LSTM MDAE score 2.8741014487408094
+	LSTM RMSE score 5.391670051438815
+	
+	### CLIENT 2 ###
+	Global Model: Rounds: 20 Epochs: 100  Steps: 7
+	LSTM R2 score 0.4601876139640808
+	LSTM MSE score 21.672112108210488
+	LSTM MAPE score 0.08306277259628062
+	LSTM MAE score 3.713129506337662
+	LSTM MDAE score 3.169216747295522
+	LSTM RMSE score 4.6553315787611185
+	
+	### CLIENT 3 ###
+	Global Model: Rounds: 20 Epochs: 100  Steps: 7
+	LSTM R2 score 0.5736293792724609
+	LSTM MSE score 16.33129085420531
+	LSTM MAPE score 0.06783802145564177
+	LSTM MAE score 3.125862665828179
+	LSTM MDAE score 2.6200488363592527
+	LSTM RMSE score 4.041199185168347
